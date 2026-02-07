@@ -39,7 +39,7 @@ spec:
         - resources-finalizer.argocd.argoproj.io
         project: default
         sources:
-          - repoURL: https://github.com/Azure-Samples/aks-platform-engineering.git
+          - repoURL: https://github.com/gabimirea/aks-platform-engineering.git
             path: aks-platform-engineering/tree/main/gitops/apps/infra
             targetRevision: HEAD
         destination:

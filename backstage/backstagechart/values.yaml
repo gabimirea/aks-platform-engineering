@@ -16,7 +16,7 @@ env:
   K8S_CLUSTER_URL: "https://your-cluster-url"
   K8S_SERVICE_ACCOUNT_TOKEN: "token"
   GITHUB_TOKEN: "token"
-  GITOPS_REPO: "https://github.com/Azure-Samples/platform-engineering"
+  GITOPS_REPO: "https://github.com/gabimirea/platform-engineering"
   
 
 

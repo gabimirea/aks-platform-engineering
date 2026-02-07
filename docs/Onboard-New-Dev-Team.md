@@ -76,7 +76,7 @@ metadata:
 spec:
   project: default
   source:    
-      repoURL: https://github.com/Azure-Samples/aks-store-demo.git    
+      repoURL: https://github.com/gabimirea/aks-store-demo.git    
       targetRevision: HEAD
       path: kustomize/overlays/dev             
   syncPolicy:
