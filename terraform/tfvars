@@ -1,7 +1,7 @@
 # Sample tfvars - rename to terraform.tfvars to use
 
 # Azure region
-location = "westus3"
+location = "swedencentral"
 
 # Kubernetes version
 kubernetes_version = null # Defaults to latest

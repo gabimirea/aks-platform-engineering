@@ -14,7 +14,7 @@ variable "github_token" {
 variable "location" {
   description = "Specifies the the location for the Azure resources."
   type        = string
-  default     = "eastus2"
+  default     = "swedencentral"
 }
 
 variable "agents_size" {

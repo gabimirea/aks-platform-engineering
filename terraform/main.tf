@@ -481,13 +481,13 @@ resource "kubernetes_namespace" "argocd_namespace" {
 
 resource "kubernetes_secret" "git_secrets" {
   depends_on = [kubernetes_namespace.argocd_namespace]
-  for_each = {
+  for_each = fileexists(pathexpand(var.git_private_ssh_key)) ? {
     git-addons = {
       type          = "git"
       url           = var.gitops_addons_org
       sshPrivateKey = file(pathexpand(var.git_private_ssh_key))
     }
-  }
+  } : {}
   metadata {
     name      = each.key
     namespace = kubernetes_namespace.argocd_namespace.metadata[0].name
