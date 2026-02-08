@@ -37,10 +37,9 @@ spec:
               type: WorkloadIdentity
             networkPluginMode: overlay
             controlplane:
-              ## Optional SSH public key data (must be valid)
-              sshPublicKey: ''
-              networkPluginMode: overlay
               version: v1.30.100
+              networkPluginMode: overlay
+              sshPublicKey: ''
             defaults:
               agentPool:
                 sku: Standard_D2s_v3
