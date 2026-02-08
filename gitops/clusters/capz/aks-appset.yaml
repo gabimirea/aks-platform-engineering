@@ -28,6 +28,7 @@ spec:
           valuesObject:
             cluster:
               location: swedencentral
+              networkPluginMode: overlay
             subscriptionID: '{{metadata.annotations.subscription_id}}'
             identity:
               clientID: '{{metadata.annotations.akspe_identity_id}}'
@@ -37,6 +38,7 @@ spec:
             controlplane:
               ## Optional SSH public key data (must be valid)
               sshPublicKey: ''
+              networkPluginMode: overlay
             defaults:
               agentPool:
                 sku: Standard_D2s_v3
