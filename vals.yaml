@@ -1,8 +1,0 @@
-cluster:
-  location: swedencentral
-  networkPluginMode: overlay
-version: v1.30.100
-controlplane:
-  version: v1.30.100
-  networkPluginMode: overlay
-networkPluginMode: overlay
