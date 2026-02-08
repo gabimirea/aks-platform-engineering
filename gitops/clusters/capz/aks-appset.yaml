@@ -26,6 +26,8 @@ spec:
         targetRevision: v0.2.4
         helm:
           valuesObject:
+            cluster:
+              location: swedencentral
             subscriptionID: '{{metadata.annotations.subscription_id}}'
             identity:
               clientID: '{{metadata.annotations.akspe_identity_id}}'

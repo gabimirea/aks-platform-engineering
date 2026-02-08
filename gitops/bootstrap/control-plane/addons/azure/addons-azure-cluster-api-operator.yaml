@@ -4,6 +4,7 @@ kind: ApplicationSet
 metadata:
   name: addons-cluster-api
 spec:
+  location: swedencentral
   syncPolicy:
     preserveResourcesOnDeletion: true
   generators:

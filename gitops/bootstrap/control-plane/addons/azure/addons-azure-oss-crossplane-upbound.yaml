@@ -4,6 +4,7 @@ kind: ApplicationSet
 metadata:
   name: addons-crossplane-azure-upbound
 spec:
+  location: swedencentral
   syncPolicy:
     preserveResourcesOnDeletion: true
   generators:
