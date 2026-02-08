@@ -29,7 +29,7 @@ spec:
             cluster:
               location: swedencentral
               networkPluginMode: overlay
-            version: v1.30.100
+              version: v1.30.100
             subscriptionID: '{{metadata.annotations.subscription_id}}'
             identity:
               clientID: '{{metadata.annotations.akspe_identity_id}}'
