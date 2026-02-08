@@ -29,7 +29,7 @@ spec:
             cluster:
               location: swedencentral
               networkPluginMode: overlay
-              version: v1.30.100
+              version: v1.33.6
             subscriptionID: '{{metadata.annotations.subscription_id}}'
             identity:
               clientID: '{{metadata.annotations.akspe_identity_id}}'
@@ -37,9 +37,11 @@ spec:
               type: WorkloadIdentity
             networkPluginMode: overlay
             controlplane:
-              version: v1.30.100
+              kubernetes_version: v1.33.6
               networkPluginMode: overlay
               sshPublicKey: ''
+              sku:
+                tier: Standard
             defaults:
               agentPool:
                 sku: Standard_D2s_v3
