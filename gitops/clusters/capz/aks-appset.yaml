@@ -30,6 +30,9 @@ spec:
               location: swedencentral
               networkPluginMode: overlay
               version: v1.33.6
+              labels:
+                enable_argocd: "true"
+                environment: dev
             subscriptionID: '{{metadata.annotations.subscription_id}}'
             identity:
               clientID: '{{metadata.annotations.akspe_identity_id}}'

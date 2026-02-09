@@ -11,6 +11,8 @@ spec:
       path: kustomize/overlays/dev             
   syncPolicy:
       automated: {}
+      syncOptions:
+      - CreateNamespace=true
   destination:
       namespace: store-demo
-      server: https://kubernetes.default.svc 
+      name: aks0 
