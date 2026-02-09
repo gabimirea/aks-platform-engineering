@@ -13,8 +13,4 @@ spec:
       automated: {}
   destination:
       namespace: argocd
-      server: https://kubernetes.default.svc
-  template:
-    metadata:
-      annotations:
-        backstage.io/kubernetes-id: 
+      server: https://kubernetes.default.svc 
