@@ -1,18 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aks-store-demo
+  name: aks0-aks-store-demo
   namespace: argocd
 spec:
   project: default
-  source:    
-      repoURL: https://github.com/Azure-Samples/aks-store-demo.git
-      targetRevision: HEAD
-      path: kustomize/overlays/dev             
-  syncPolicy:
-      automated: {}
-      syncOptions:
-      - CreateNamespace=true
+
+  source:
+    repoURL: https://github.com/Azure-Samples/aks-store-demo.git
+    targetRevision: HEAD
+    path: kustomize/overlays/dev
+
   destination:
-      namespace: store-demo
-      name: aks0 
+    name: aks0
+    namespace: pets
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
