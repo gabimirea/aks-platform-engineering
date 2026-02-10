@@ -31,7 +31,6 @@ spec:
         # Easiest exposure for a quick test:
         service:
           type: LoadBalancer
-          port: 7007
 
         appConfig:
           app:
