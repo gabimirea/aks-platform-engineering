@@ -38,7 +38,7 @@ spec:
             backend:
               baseUrl: http://4.225.31.226:7007
               cors:
-                origin: http:/4.225.31.226:7007
+                origin: http://4.225.31.226:7007
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
                 credentials: true
 
