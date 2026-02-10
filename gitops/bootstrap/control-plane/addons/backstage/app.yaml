@@ -34,11 +34,11 @@ spec:
             enable: true
             app:
               title: "Developer Portal"
-              baseUrl: http://4.225.92.231:7007
+              baseUrl: http://4.225.31.226:7007
             backend:
-              baseUrl: http://4.225.92.231:7007
+              baseUrl: http://4.225.31.226:7007
               cors:
-                origin: http://4.225.92.231:7007
+                origin: http:/4.225.31.226:7007
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
                 credentials: true
 
