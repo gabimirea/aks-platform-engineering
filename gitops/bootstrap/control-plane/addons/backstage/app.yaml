@@ -21,13 +21,6 @@ spec:
     helm:
       values: |
         backstage:
-          args:
-            - --config
-            - /app/app-config.yaml
-            - --config
-            - /app/app-config.production.yaml
-            - --config
-            - /app/app-config-from-configmap.yaml
           image:
             registry: ecdcrepository.azurecr.io
             repository: dev-portal/backstage
