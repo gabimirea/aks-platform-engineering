@@ -29,15 +29,21 @@ spec:
             tag: "1.0.9"
             pullPolicy: Always
         # Easiest exposure for a quick test:
+
+          appConfig:
+            app:
+              title: "Developer Portal"
+              baseUrl: http://4.225.92.231:7007
+            backend:
+              baseUrl: http://4.225.92.231:7007
+              cors:
+                origin: http://4.225.92.231:7007
+                methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+                credentials: true
+
         service:
           type: LoadBalancer
 
-        appConfig:
-          app:
-            title: "Developer Portal"
-            baseUrl: http://backstage.example.local
-          backend:
-            baseUrl: http://backstage.example.local
   syncPolicy:
     automated:
       prune: true
