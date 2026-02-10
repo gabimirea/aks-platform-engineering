@@ -21,17 +21,13 @@ spec:
     helm:
       values: |
         backstage:
-          # Option A: start with a public image (PoC)
-          # Option B: point to your ACR image
           image:
             registry: ecdcrepository.azurecr.io
             repository: dev-portal/backstage
             tag: "1.0.9"
             pullPolicy: Always
-        # Easiest exposure for a quick test:
-
+    
           appConfig:
-            enable: true
             app:
               title: "Developer Portal"
               baseUrl: http://4.225.31.226:7007
@@ -41,7 +37,7 @@ spec:
                 origin: http://4.225.31.226:7007
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
                 credentials: true
-
+    
         service:
           type: LoadBalancer
 
