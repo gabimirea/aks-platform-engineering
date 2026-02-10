@@ -31,6 +31,7 @@ spec:
         # Easiest exposure for a quick test:
 
           appConfig:
+            enable: true
             app:
               title: "Developer Portal"
               baseUrl: http://4.225.92.231:7007
