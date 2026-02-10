@@ -24,10 +24,10 @@ spec:
           # Option A: start with a public image (PoC)
           # Option B: point to your ACR image
           image:
-            registry: ghcr.io
-            repository: backstage/backstage
-            tag: latest
-
+            registry: ecdcrepository.azurecr.io
+            repository: dev-portal/backstage
+            tag: "1.0.0"
+            pullPolicy: Always
         # Easiest exposure for a quick test:
         service:
           type: LoadBalancer
