@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: backstage
+  namespace: argocd
+  labels:
+    # IMPORTANT:
+    # Copy the SAME labels used by the other add-ons in this repo folder,
+    # because the sample’s ApplicationSet filters which manifests it applies.
+    # (Open any existing addon YAML in gitops/bootstrap/control-plane/addons
+    #  and replicate its labels here.)
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: backstage
+  source:
+    repoURL: https://github.com/backstage/charts
+    targetRevision: main
+    path: charts/backstage
+    helm:
+      values: |
+        backstage:
+          # Option A: start with a public image (PoC)
+          # Option B: point to your ACR image
+          image:
+            registry: ghcr.io
+            repository: backstage/backstage
+            tag: latest
+
+        # Easiest exposure for a quick test:
+        service:
+          type: LoadBalancer
+          port: 7007
+
+        appConfig:
+          app:
+            title: "Developer Portal"
+            baseUrl: http://backstage.example.local
+          backend:
+            baseUrl: http://backstage.example.local
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
