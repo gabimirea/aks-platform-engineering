@@ -21,12 +21,19 @@ spec:
     helm:
       values: |
         backstage:
+          args:
+            - --config
+            - /app/app-config.yaml
+            - --config
+            - /app/app-config.production.yaml
+            - --config
+            - /app/app-config-from-configmap.yaml
           image:
             registry: ecdcrepository.azurecr.io
             repository: dev-portal/backstage
             tag: "1.0.9"
             pullPolicy: Always
-    
+
           appConfig:
             app:
               title: "Developer Portal"
@@ -37,7 +44,7 @@ spec:
                 origin: http://4.225.31.226:7007
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
                 credentials: true
-    
+
         service:
           type: LoadBalancer
 
