@@ -13,6 +13,9 @@ spec:
             - key: akuity.io/argo-cd-cluster-name
               operator: NotIn
               values: [in-cluster]
+            - key: environment
+              operator: In
+              values: [control-plane]
   template:
     metadata:
       name: cluster-addons
