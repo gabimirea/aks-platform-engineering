@@ -35,6 +35,8 @@ spec:
             identity:
               clientID: '{{metadata.annotations.akspe_identity_id}}'
               tenantID: '{{metadata.annotations.tenant_id}}'
+              clusterIdentityName: aks1-identity
+              clusterIdentitySecretName: aks1-identity-secret
               type: WorkloadIdentity
             networkPluginMode: overlay
             controlplane:
