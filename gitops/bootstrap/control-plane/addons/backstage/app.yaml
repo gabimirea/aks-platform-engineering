@@ -50,6 +50,16 @@ spec:
                   target: https://github.com/backstage/software-templates/blob/main/scaffolder-templates/react-ssr-template/template.yaml
                   rules:
                     - allow: [Template]
+                - type: url
+                  target: https://github.com/gabimirea/aks-platform-engineering/blob/main/gitops/apps/myapp/cnpg/catalog-info.yaml
+                  rules:
+                    - allow: [Component, System, Resource, API, Location]
+            techdocs:
+              builder: local
+              generator:
+                runIn: local
+              publisher:
+                type: local
 
         service:
           type: LoadBalancer
