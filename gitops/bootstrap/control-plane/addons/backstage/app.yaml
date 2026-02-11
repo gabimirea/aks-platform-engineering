@@ -4,11 +4,9 @@ metadata:
   name: backstage
   namespace: argocd
   labels:
-    # IMPORTANT:
-    # Copy the SAME labels used by the other add-ons in this repo folder,
-    # because the sample’s ApplicationSet filters which manifests it applies.
-    # (Open any existing addon YAML in gitops/bootstrap/control-plane/addons
-    #  and replicate its labels here.)
+    app.kubernetes.io/name: backstage
+    app.kubernetes.io/part-of: platform-addons
+    app.kubernetes.io/managed-by: argocd
 spec:
   project: default
   destination:
@@ -16,7 +14,7 @@ spec:
     namespace: backstage
   source:
     repoURL: https://github.com/backstage/charts
-    targetRevision: main
+    targetRevision: a450c6408e3ef7b10c45d7fd4bf87568ebb24d08
     path: charts/backstage
     helm:
       values: |
@@ -26,24 +24,36 @@ spec:
             repository: dev-portal/backstage
             tag: "1.0.9"
             pullPolicy: Always
+          extraEnvVars:
+            - name: APP_BASE_URL
+              value: https://portaldev.ecdc.azure
 
           appConfig:
             app:
               title: "Developer Portal"
-              baseUrl: http://4.225.31.226:7007
+              baseUrl: ${APP_BASE_URL:-http://localhost:7007}
             backend:
-              baseUrl: http://4.225.31.226:7007
+              baseUrl: ${APP_BASE_URL:-http://localhost:7007}
               csp:
                 upgrade-insecure-requests: false
               cors:
-                origin: http://4.225.31.226:7007
+                origin: ${APP_BASE_URL:-http://localhost:7007}
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
                 credentials: true
 
         service:
-          type: LoadBalancer
+          type: ClusterIP
+
+        ingress:
+          enabled: true
+          host: backstage.example.com
+          path: /
+          tls:
+            enabled: false
 
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
