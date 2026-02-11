@@ -33,6 +33,8 @@ spec:
               baseUrl: http://4.225.31.226:7007
             backend:
               baseUrl: http://4.225.31.226:7007
+              csp:
+                upgrade-insecure-requests: false
               cors:
                 origin: http://4.225.31.226:7007
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
