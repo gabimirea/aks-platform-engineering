@@ -34,7 +34,8 @@ spec:
               baseUrl: ${APP_BASE_URL:-http://localhost:7007}
             auth:
               providers:
-                guest: {}
+                guest:
+                  dangerouslyAllowOutsideDevelopment: true
             backend:
               baseUrl: ${APP_BASE_URL:-http://localhost:7007}
               csp:
