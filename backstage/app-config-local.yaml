@@ -76,7 +76,7 @@ proxy:
 techdocs:
   builder: 'local' # Alternatives - 'external'
   generator:
-    runIn: 'docker' # Alternatives - 'local'
+    runIn: 'local' # Alternatives - 'docker'
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
 
@@ -165,6 +165,10 @@ catalog:
       target: ./examples/org.yaml
       rules:
         - allow: [User, Group]
+
+    # CNPG platform entities from this repository
+    - type: url
+      target: https://github.com/gabimirea/aks-platform-engineering/blob/main/gitops/apps/myapp/cnpg/catalog-info.yaml
 
     ## Uncomment these lines to add more example data
     # - type: url
