@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-portal
+  template:
+    metadata:
+      labels:
+        app: simple-portal
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          configMap:
+            name: simple-portal-html
+
