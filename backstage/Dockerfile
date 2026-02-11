@@ -4,8 +4,10 @@ FROM node:20-bookworm-slim
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip g++ build-essential && \
-    pip3 install --no-cache-dir mkdocs-techdocs-core && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-venv g++ build-essential && \
+    python3 -m venv /opt/techdocs-venv && \
+    /opt/techdocs-venv/bin/pip install --no-cache-dir --upgrade pip mkdocs-techdocs-core && \
+    ln -s /opt/techdocs-venv/bin/mkdocs /usr/local/bin/mkdocs && \
     yarn config set python /usr/bin/python3
 
 # Install sqlite3 dependencies. You can skip this if you don't use sqlite3 in the image,
