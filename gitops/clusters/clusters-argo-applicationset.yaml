@@ -27,8 +27,10 @@ spec:
       - group: addons.cluster.x-k8s.io
         kind: HelmChartProxy
         jqPathExpressions:
+        - .spec.clusterSelector
         - .spec.namespace
         - .spec.options.enableClientCache
+        - .spec.options.timeout
         - .spec.options.upgrade
       syncPolicy:
         retry:
