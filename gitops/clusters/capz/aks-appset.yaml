@@ -7,15 +7,11 @@ spec:
   generators:
   - clusters:
       selector:
-        matchExpressions:
-          - key: akuity.io/argo-cd-cluster-name
-            operator: NotIn
-            values: [in-cluster]
-          - key: cluster_name
-            operator: DoesNotExist
+        matchLabels:
+          environment: control-plane
   template:
     metadata:
-      name: '{{name}}'
+      name: aks0
       namespace: argocd
     spec:
       destination:
