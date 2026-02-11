@@ -34,7 +34,7 @@ spec:
   valuesTemplate: |
     applications:
       apps-infra:
-        namespace: argocd
+        namespace: default
         finalizers:
         - resources-finalizer.argocd.argoproj.io
         project: default
