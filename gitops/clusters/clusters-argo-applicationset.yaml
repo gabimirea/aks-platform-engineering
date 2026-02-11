@@ -23,6 +23,13 @@ spec:
       destination:
         name: '{{name}}'
         namespace: workload
+      ignoreDifferences:
+      - group: addons.cluster.x-k8s.io
+        kind: HelmChartProxy
+        jqPathExpressions:
+        - .spec.namespace
+        - .spec.options.enableClientCache
+        - .spec.options.upgrade
       syncPolicy:
         retry:
           limit: 10
