@@ -1,0 +1,8 @@
+site_name: AKS1 CNPG Platform
+site_description: CloudNativePG on AKS1 architecture and operations guide
+docs_dir: docs
+nav:
+  - Overview: index.md
+  - Architecture: architecture.md
+  - Operations: operations.md
+  - Runbooks: runbooks.md

@@ -1,0 +1,54 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: aks1-cnpg-platform
+  title: AKS1 CNPG Platform
+  description: CloudNativePG platform running on AKS1 for PostgreSQL workloads.
+  tags:
+    - cnpg
+    - postgres
+    - aks
+spec:
+  owner: group:default/platform-engineering
+  domain: default
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: aks1-cnpg-operator
+  title: AKS1 CNPG Operator
+  description: CloudNativePG operator managed by Argo CD on destination cluster aks1.
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    argocd/app-name: aks1-cnpg-operator
+  tags:
+    - cnpg
+    - operator
+    - argocd
+  links:
+    - url: https://github.com/cloudnative-pg/cloudnative-pg
+      title: CloudNativePG Project
+      icon: github
+spec:
+  type: service
+  owner: group:default/platform-engineering
+  lifecycle: production
+  system: aks1-cnpg-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: aks1-app-db
+  title: AKS1 App Database
+  description: CNPG PostgreSQL cluster app-db in namespace cnpg-demo.
+  annotations:
+    argocd/app-name: aks1-cnpg-demo
+    backstage.io/kubernetes-label-selector: cnpg.io/cluster=app-db
+  tags:
+    - postgres
+    - database
+    - cnpg
+spec:
+  type: database
+  owner: group:default/platform-engineering
+  system: aks1-cnpg-platform
