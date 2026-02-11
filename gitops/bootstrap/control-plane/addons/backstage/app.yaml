@@ -26,7 +26,7 @@ spec:
             pullPolicy: Always
           extraEnvVars:
             - name: APP_BASE_URL
-              value: https://portaldev.ecdc.azure
+              value: http://portaldev.ecdc.azure
 
           appConfig:
             app:
@@ -46,7 +46,7 @@ spec:
 
         ingress:
           enabled: true
-          host: backstage.example.com
+          host: portaldev.ecdc.azure
           path: /
           tls:
             enabled: false
