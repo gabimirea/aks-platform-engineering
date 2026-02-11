@@ -67,4 +67,4 @@ spec:
         - group: infrastructure.cluster.x-k8s.io
           kind: AzureManagedControlPlane
           jqPathExpressions:
-            - .spec.controlPlaneEndpoint
+            - .spec
