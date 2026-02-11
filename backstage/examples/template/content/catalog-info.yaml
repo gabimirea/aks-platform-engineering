@@ -3,7 +3,6 @@ kind: Component
 metadata:
   name: ${{ values.name | dump }}
 spec:
-  type: kubernetes-cluster
-  owner: owaino@microsoft.com
+  type: service
+  owner: user:guest
   lifecycle: experimental
-  providesApis: [example-grpc-api]

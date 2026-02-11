@@ -1,55 +1,67 @@
-FROM node:20-bookworm-slim
+# ---------- build ----------
+FROM node:20-bookworm AS build
 
-# Install isolate-vm dependencies, these are needed by the @backstage/plugin-scaffolder-backend.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip python3-venv g++ build-essential && \
-    python3 -m venv /opt/techdocs-venv && \
-    /opt/techdocs-venv/bin/pip install --no-cache-dir --upgrade pip mkdocs-techdocs-core && \
-    ln -s /opt/techdocs-venv/bin/mkdocs /usr/local/bin/mkdocs && \
-    yarn config set python /usr/bin/python3
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-pip python3-setuptools python3-distutils \
+    make g++ clang git pkg-config libc6-dev libstdc++-12-dev \
+    cmake ninja-build jq \
+  && rm -rf /var/lib/apt/lists/*
 
-# Install sqlite3 dependencies. You can skip this if you don't use sqlite3 in the image,
-# in which case you should also move better-sqlite3 to "devDependencies" in package.json.
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    apt-get install -y --no-install-recommends libsqlite3-dev
-
-# From here on we use the least-privileged `node` user to run the backend.
-USER node
-
-# This should create the app dir as `node`.
-# If it is instead created as `root` then the `tar` command below will
-# fail: `can't create directory 'packages/': Permission denied`.
-# If this occurs, then ensure BuildKit is enabled (`DOCKER_BUILDKIT=1`)
-# so the app dir is correctly created as `node`.
 WORKDIR /app
 
-# This switches many Node.js dependencies to production mode.
+# Yarn Berry files
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn ./.yarn
+
+# Source
+COPY packages ./packages
+COPY app-config*.yaml ./
+
+# (keep if you need it for isolated-vm)
+RUN jq '(.resolutions //= {}) | .resolutions["isolated-vm"]="^5.0.4"' package.json > /tmp/package.json \
+ && mv /tmp/package.json package.json
+
+RUN corepack enable && yarn install
+
+# This creates skeleton.tar.gz + bundle.tar.gz
+RUN yarn --cwd packages/backend build
+
+RUN echo "=== backend dist after build ===" && ls -la packages/backend/dist
+
+# Create the runnable workspace from the tarballs
+RUN mkdir -p /app/dist-workspace \
+ && tar -xzf packages/backend/dist/skeleton.tar.gz -C /app/dist-workspace \
+ && tar -xzf packages/backend/dist/bundle.tar.gz -C /app/dist-workspace
+
+# Install production deps inside the extracted workspace
+WORKDIR /app/dist-workspace
+RUN corepack enable \
+ && yarn install \
+ && yarn workspaces focus backend --production
+
+RUN ls -la packages/backend/dist \
+ && (test -f packages/backend/dist/index.cjs.js || test -f packages/backend/dist/index.cjs || test -f packages/backend/dist/index.js)
+
+# Sanity check: the bundled backend entry should exist now
+RUN ls -la packages/backend/dist \
+ && (test -f packages/backend/dist/index.cjs.js || test -f packages/backend/dist/index.cjs || test -f packages/backend/dist/index.js)
+
+
+# ---------- runtime ----------
+FROM node:20-bookworm-slim AS runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-pip python3-venv \
+  && python3 -m venv /opt/techdocs-venv \
+  && /opt/techdocs-venv/bin/pip install --no-cache-dir --upgrade pip mkdocs-techdocs-core \
+  && ln -s /opt/techdocs-venv/bin/mkdocs /usr/local/bin/mkdocs \
+  && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 ENV NODE_ENV=production
+EXPOSE 7007
 
-# Copy repo skeleton first, to avoid unnecessary docker cache invalidation.
-# The skeleton contains the package.json of each package in the monorepo,
-# and along with yarn.lock and the root package.json, that's enough to run yarn install.
-COPY --chown=node:node yarn.lock package.json packages/backend/dist/skeleton.tar.gz ./
-RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
+# Copy the fully prepared dist workspace
+COPY --from=build /app/dist-workspace/ ./
+COPY --from=build /app/app-config*.yaml ./
 
-RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
-    yarn install --frozen-lockfile --production --network-timeout 300000
-
-# Then copy the rest of the backend bundle, along with any other files we might want.
-COPY --chown=node:node packages/backend/dist/bundle.tar.gz app-config*.yaml ./
-RUN tar xzf bundle.tar.gz && rm bundle.tar.gz
-
-# Copy the examples directory to the same folder as frontend and backend
-COPY --chown=node:node packages/examples ./examples
-COPY --chown=node:node packages/template-cluster ./template-cluster
-
-ENV NODE_EXTRA_CA_CERTS=/etc/tls/tls.crt
-ENV NODE_OPTIONS=--no-node-snapshot
-
-RUN printenv
-
-CMD ["node", "packages/backend", "--config", "app-config.yaml"]
+# Run bundled backend
+CMD ["node","packages/backend/dist/index.cjs.js","--config","app-config.yaml"]
