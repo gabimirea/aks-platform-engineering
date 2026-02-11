@@ -32,6 +32,9 @@ spec:
             app:
               title: "Developer Portal"
               baseUrl: ${APP_BASE_URL:-http://localhost:7007}
+            auth:
+              providers:
+                guest: {}
             backend:
               baseUrl: ${APP_BASE_URL:-http://localhost:7007}
               csp:
@@ -40,6 +43,12 @@ spec:
                 origin: ${APP_BASE_URL:-http://localhost:7007}
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
                 credentials: true
+            catalog:
+              locations:
+                - type: url
+                  target: https://github.com/backstage/software-templates/blob/main/scaffolder-templates/react-ssr-template/template.yaml
+                  rules:
+                    - allow: [Template]
 
         service:
           type: LoadBalancer
