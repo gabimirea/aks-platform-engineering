@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  template:
+    spec:
+      containers:
+        - name: mongodb
+          readinessProbe:
+            timeoutSeconds: 15
+            periodSeconds: 10
+            failureThreshold: 6
+            initialDelaySeconds: 20
+          livenessProbe:
+            timeoutSeconds: 15
+            periodSeconds: 20
+            failureThreshold: 6
+            initialDelaySeconds: 90
