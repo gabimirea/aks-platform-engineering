@@ -11,6 +11,8 @@ spec:
           - key: akuity.io/argo-cd-cluster-name
             operator: NotIn
             values: [in-cluster]
+          - key: cluster_name
+            operator: DoesNotExist
   template:
     metadata:
       name: '{{name}}'
