@@ -26,7 +26,7 @@ spec:
             pullPolicy: Always
           extraEnvVars:
             - name: APP_BASE_URL
-              value: http://backstage.ecdc.azure:7007
+              value: http://backstage.local:7007
 
           appConfig:
             app:
@@ -56,7 +56,7 @@ spec:
 
         ingress:
           enabled: false
-          host: backstage.ecdc.azure
+          host: backstage.local
           path: /
           tls:
             enabled: false
