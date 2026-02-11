@@ -1,0 +1,20 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: app-db
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 10Gi
+  superuserSecret:
+    name: app-db-superuser
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+      secret:
+        name: app-db-app
+  monitoring:
+    enablePodMonitor: false

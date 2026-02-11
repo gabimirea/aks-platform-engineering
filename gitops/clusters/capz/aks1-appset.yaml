@@ -1,0 +1,68 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: aks1-appset
+  namespace: argocd
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            environment: control-plane
+  template:
+    metadata:
+      name: aks1
+      namespace: argocd
+    spec:
+      destination:
+        namespace: default
+        server: https://kubernetes.default.svc
+      project: default
+      source:
+        repoURL: https://mboersma.github.io/cluster-api-charts
+        chart: azure-managed-cluster
+        targetRevision: v0.2.4
+        helm:
+          valuesObject:
+            cluster:
+              location: swedencentral
+              networkPluginMode: overlay
+              version: v1.33.6
+              labels:
+                enable_argocd: "true"
+                environment: db
+            subscriptionID: '{{metadata.annotations.subscription_id}}'
+            identity:
+              clientID: '{{metadata.annotations.akspe_identity_id}}'
+              tenantID: '{{metadata.annotations.tenant_id}}'
+              type: WorkloadIdentity
+            networkPluginMode: overlay
+            controlplane:
+              kubernetes_version: v1.33.6
+              networkPluginMode: overlay
+              sshPublicKey: ""
+              sku:
+                tier: Standard
+            defaults:
+              agentPool:
+                sku: Standard_D2s_v3
+      syncPolicy:
+        automated:
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: -1
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 60m
+      ignoreDifferences:
+        - group: infrastructure.cluster.x-k8s.io
+          kind: AzureManagedCluster
+          jqPathExpressions:
+            - .spec.controlPlaneEndpoint
+        - group: infrastructure.cluster.x-k8s.io
+          kind: AzureManagedControlPlane
+          jqPathExpressions:
+            - .spec
