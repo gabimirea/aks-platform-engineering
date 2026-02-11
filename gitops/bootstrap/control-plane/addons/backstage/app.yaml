@@ -26,7 +26,7 @@ spec:
             pullPolicy: Always
           extraEnvVars:
             - name: APP_BASE_URL
-              value: http://portaldev.ecdc.azure
+              value: http://portaldev.ecdc.azure:7007
 
           appConfig:
             app:
@@ -42,10 +42,10 @@ spec:
                 credentials: true
 
         service:
-          type: ClusterIP
+          type: LoadBalancer
 
         ingress:
-          enabled: true
+          enabled: false
           host: portaldev.ecdc.azure
           path: /
           tls:
