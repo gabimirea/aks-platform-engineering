@@ -12,7 +12,7 @@ spec:
     targetRevision: main
     path: gitops/apps/myapp
     directory:
-      include: "{AKS1-CNPG-Operator-ArgoApp.yaml,AKS1-CNPG-Demo-ArgoApp.yaml}"
+      include: "{AKS1-CNPG-Operator-ArgoApp.yaml,AKS1-CNPG-Demo-ArgoApp.yaml,AKSStoreDemoArgoApp.yaml}"
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
