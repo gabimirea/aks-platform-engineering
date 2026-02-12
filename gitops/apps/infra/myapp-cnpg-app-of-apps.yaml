@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: myapp-cnpg-apps
+  name: apps-deployment
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -11,6 +11,7 @@ spec:
     repoURL: https://github.com/gabimirea/aks-platform-engineering.git
     targetRevision: main
     path: gitops/apps/_empty
+    #path: gitops/apps/infra
     #directory:
     #  include: "{AKS1-CNPG-Operator-ArgoApp.yaml,AKS1-CNPG-Demo-ArgoApp.yaml,AKSStoreDemoArgoApp.yaml}"
   destination:
