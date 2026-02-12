@@ -40,6 +40,10 @@ spec:
               baseUrl: ${APP_BASE_URL:-http://localhost:7007}
               csp:
                 upgrade-insecure-requests: false
+              reading:
+                allow:
+                  - host: raw.githubusercontent.com
+                  - host: github.com
               cors:
                 origin: ${APP_BASE_URL:-http://localhost:7007}
                 methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
