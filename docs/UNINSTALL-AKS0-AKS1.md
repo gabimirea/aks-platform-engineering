@@ -12,18 +12,28 @@ kubectl config current-context
 kubectl get nodes
 ```
 
+Delete the AKS Store Argo app first (if present):
+
+```powershell
+kubectl -n argocd delete application aks0-aks-store-demo --ignore-not-found
+```
+
 ## 2) Stop GitOps reconciliation first (important)
 
 If you skip this, Argo CD may recreate resources while you are deleting them.
 
 ```powershell
-# Pause auto-sync on the parent app (if present) so child resources are not recreated.
-if (kubectl -n argocd get application clusters 2>$null) {
-  kubectl -n argocd patch application clusters --type merge -p '{"spec":{"syncPolicy":null}}'
-}
+# If destination clusters are already gone/unreachable, clear app finalizers first.
+kubectl -n argocd patch application aks0 --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+kubectl -n argocd patch application aks1 --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+kubectl -n argocd patch application aks0-aks-store-demo --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+kubectl -n argocd patch application aks1-cnpg-operator --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+kubectl -n argocd patch application aks1-cnpg-demo --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
 
+kubectl -n argocd delete applicationset clusters --ignore-not-found
+kubectl -n argocd delete application clusters --ignore-not-found
 kubectl -n argocd delete applicationset aks-appset aks1-appset --ignore-not-found
-kubectl -n argocd delete application aks0 aks1 --ignore-not-found
+kubectl -n argocd delete application aks0 aks1 aks0-aks-store-demo --ignore-not-found
 kubectl -n argocd delete application aks1-cnpg-demo aks1-cnpg-operator --ignore-not-found
 ```
 
@@ -83,6 +93,7 @@ Remove finalizers on Argo CD applications:
 ```powershell
 kubectl -n argocd patch application aks0 --type merge -p '{"metadata":{"finalizers":[]}}'
 kubectl -n argocd patch application aks1 --type merge -p '{"metadata":{"finalizers":[]}}'
+kubectl -n argocd patch application aks0-aks-store-demo --type merge -p '{"metadata":{"finalizers":[]}}'
 kubectl -n argocd patch application aks1-cnpg-operator --type merge -p '{"metadata":{"finalizers":[]}}'
 kubectl -n argocd patch application aks1-cnpg-demo --type merge -p '{"metadata":{"finalizers":[]}}'
 ```
@@ -92,6 +103,21 @@ Remove finalizers on CAPI clusters:
 ```powershell
 kubectl patch cluster aks0 --type merge -p '{"metadata":{"finalizers":[]}}'
 kubectl patch cluster aks1 --type merge -p '{"metadata":{"finalizers":[]}}'
+```
+
+If CAPZ infra resources remain in `Deleting` for too long, clear their finalizers too:
+
+```powershell
+kubectl patch azuremanagedcontrolplane aks0 --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+kubectl patch azuremanagedcontrolplane aks1 --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+kubectl patch azuremanagedcluster aks0 --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+kubectl patch azuremanagedcluster aks1 --type merge -p '{"metadata":{"finalizers":[]}}' 2>$null
+
+$mps = kubectl get machinepool -l "cluster.x-k8s.io/cluster-name in (aks0,aks1)" -o name
+foreach ($mp in $mps) { kubectl patch $mp --type merge -p '{"metadata":{"finalizers":[]}}' }
+
+$ammps = kubectl get azuremanagedmachinepool -l "cluster.x-k8s.io/cluster-name in (aks0,aks1)" -o name
+foreach ($ammp in $ammps) { kubectl patch $ammp --type merge -p '{"metadata":{"finalizers":[]}}' }
 ```
 
 ## 9) Final verification
