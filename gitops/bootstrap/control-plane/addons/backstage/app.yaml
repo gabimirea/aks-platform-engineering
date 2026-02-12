@@ -53,7 +53,7 @@ spec:
                 - type: url
                   target: https://github.com/gabimirea/aks-platform-engineering/blob/main/gitops/apps/myapp/cnpg/catalog-info.yaml
                   rules:
-                    - allow: [Component, System, Resource, API, Location]
+                    - allow: [Component, System, Resource, API, Location, Group]
             techdocs:
               builder: local
               generator:
