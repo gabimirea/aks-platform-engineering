@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infra-apps
+  name: apps-of-apps-deploymenyt
   namespace: argocd
 spec:
   project: default
