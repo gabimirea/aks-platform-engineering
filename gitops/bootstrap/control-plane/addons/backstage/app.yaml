@@ -51,7 +51,7 @@ spec:
                   rules:
                     - allow: [Template]
                 - type: url
-                  target: https://github.com/gabimirea/aks-platform-engineering/blob/main/gitops/apps/myapp/cnpg/catalog-info.yaml
+                  target: https://raw.githubusercontent.com/gabimirea/aks-platform-engineering/main/gitops/apps/myapp/cnpg/catalog-info.yaml
                   rules:
                     - allow: [Component, System, Resource, API, Location, Group]
             techdocs:
