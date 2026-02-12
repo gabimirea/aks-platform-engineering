@@ -52,3 +52,14 @@ spec:
   type: database
   owner: group:default/platform-engineering
   system: aks1-cnpg-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-engineering
+  title: Platform Engineering
+  description: Team owning AKS platform and CloudNativePG services.
+spec:
+  type: team
+  profile:
+    displayName: Platform Engineering
