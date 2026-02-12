@@ -63,3 +63,5 @@ spec:
   type: team
   profile:
     displayName: Platform Engineering
+  children: []
+  members: []
