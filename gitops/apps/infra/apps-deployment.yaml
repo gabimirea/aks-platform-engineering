@@ -10,10 +10,10 @@ spec:
   source:
     repoURL: https://github.com/gabimirea/aks-platform-engineering.git
     targetRevision: main
-    path: gitops/apps/_empty
-    #path: gitops/apps/myapp
-    #directory:
-    #  include: "{AKS1-CNPG-Operator-ArgoApp.yaml}"
+    #path: gitops/apps/_empty
+    path: gitops/apps/myapp
+    directory:
+      include: "{AKS1-CNPG-Operator-ArgoApp.yaml}"
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
