@@ -9,13 +9,14 @@ This is a file layout and operating guide only. Files are prepared to be applied
 - Management cluster: `gitops-aks` (Argo CD control plane)
 - Workload DB cluster: `aks1` (created by CAPZ)
 - DB operator: CNPG (installed on `aks1`)
-- DB workload: CNPG `Cluster` (demo `app-db`) on `aks1`
+- DB workload: CNPG `Cluster` (`app-db`) across `demo`, `dev`, `uat`, and `prod` overlays on `aks1`
 
 Flow:
 1. `clusters` app (in `gitops-aks`) applies CAPZ manifests under `gitops/clusters/capz`.
 2. `aks1-appset` creates Argo `Application` `aks1`, which creates the `aks1` Kubernetes cluster.
 3. `AKS1-CNPG-Operator-ArgoApp` installs CNPG operator into `aks1`.
 4. `AKS1-CNPG-Demo-ArgoApp` applies CNPG `Cluster` manifests from `gitops/apps/myapp/postgres/overlays/demo` into `aks1`.
+5. `AKS1-CNPG-Dev-ArgoApp`, `AKS1-CNPG-UAT-ArgoApp`, and `AKS1-CNPG-Prod-ArgoApp` apply environment overlays for `cnpg-dev`, `cnpg-uat`, and `cnpg-prod`.
 
 ## Files in This Blueprint
 
@@ -40,6 +41,18 @@ Flow:
   - Namespace target: `cnpg-demo`
   - Has sync wave `"1"` so it runs after operator app
 
+- `gitops/apps/myapp/AKS1-CNPG-Dev-ArgoApp.yaml`
+  - Deploys manifests from `gitops/apps/myapp/postgres/overlays/dev`
+  - Namespace target: `cnpg-dev`
+
+- `gitops/apps/myapp/AKS1-CNPG-UAT-ArgoApp.yaml`
+  - Deploys manifests from `gitops/apps/myapp/postgres/overlays/uat`
+  - Namespace target: `cnpg-uat`
+
+- `gitops/apps/myapp/AKS1-CNPG-Prod-ArgoApp.yaml`
+  - Deploys manifests from `gitops/apps/myapp/postgres/overlays/prod`
+  - Namespace target: `cnpg-prod`
+
 ### CNPG demo manifests
 
 - `gitops/apps/myapp/postgres/overlays/demo/kustomization.yaml`
@@ -62,6 +75,23 @@ Flow:
   - Single instance (`instances: 1`) for demo
   - Bootstraps database `app`, owner `app`
   - Uses above secrets for superuser/app credentials
+
+### Environment overlays
+
+- `gitops/apps/myapp/postgres/overlays/dev`
+  - Inherits from `overlays/demo`
+  - Namespace: `cnpg-dev`
+  - Default sizing: `instances: 1`, `storage: 10Gi`
+
+- `gitops/apps/myapp/postgres/overlays/uat`
+  - Inherits from `overlays/demo`
+  - Namespace: `cnpg-uat`
+  - Default sizing: `instances: 2`, `storage: 20Gi`
+
+- `gitops/apps/myapp/postgres/overlays/prod`
+  - Inherits from `overlays/demo`
+  - Namespace: `cnpg-prod`
+  - Default sizing: `instances: 3`, `storage: 100Gi`
 
 ## Rollout Order (When You Decide to Deploy)
 

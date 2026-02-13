@@ -38,16 +38,78 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
-  name: aks1-app-db
-  title: AKS1 App Database
+  name: aks1-app-db-demo
+  title: AKS1 App Database Demo
   description: CNPG PostgreSQL cluster app-db in namespace cnpg-demo.
   annotations:
     argocd/app-name: aks1-cnpg-demo
+    backstage.io/kubernetes-namespace: cnpg-demo
     backstage.io/kubernetes-label-selector: cnpg.io/cluster=app-db
   tags:
     - postgres
     - database
     - cnpg
+    - demo
+spec:
+  type: database
+  owner: group:default/platform-engineering
+  system: aks1-cnpg-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: aks1-app-db-dev
+  title: AKS1 App Database Dev
+  description: CNPG PostgreSQL cluster app-db in namespace cnpg-dev.
+  annotations:
+    argocd/app-name: aks1-cnpg-dev
+    backstage.io/kubernetes-namespace: cnpg-dev
+    backstage.io/kubernetes-label-selector: cnpg.io/cluster=app-db
+  tags:
+    - postgres
+    - database
+    - cnpg
+    - dev
+spec:
+  type: database
+  owner: group:default/platform-engineering
+  system: aks1-cnpg-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: aks1-app-db-uat
+  title: AKS1 App Database UAT
+  description: CNPG PostgreSQL cluster app-db in namespace cnpg-uat.
+  annotations:
+    argocd/app-name: aks1-cnpg-uat
+    backstage.io/kubernetes-namespace: cnpg-uat
+    backstage.io/kubernetes-label-selector: cnpg.io/cluster=app-db
+  tags:
+    - postgres
+    - database
+    - cnpg
+    - uat
+spec:
+  type: database
+  owner: group:default/platform-engineering
+  system: aks1-cnpg-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: aks1-app-db-prod
+  title: AKS1 App Database Prod
+  description: CNPG PostgreSQL cluster app-db in namespace cnpg-prod.
+  annotations:
+    argocd/app-name: aks1-cnpg-prod
+    backstage.io/kubernetes-namespace: cnpg-prod
+    backstage.io/kubernetes-label-selector: cnpg.io/cluster=app-db
+  tags:
+    - postgres
+    - database
+    - cnpg
+    - prod
 spec:
   type: database
   owner: group:default/platform-engineering

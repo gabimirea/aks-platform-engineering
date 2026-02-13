@@ -5,13 +5,13 @@
 - Argo CD runs on `gitops-aks`.
 - Argo CD cluster registry includes destination cluster `aks1`.
 - Application `aks1-cnpg-operator` deploys the CNPG operator to `aks1/cnpg-system`.
-- Application `aks1-cnpg-demo` deploys the PostgreSQL `Cluster` resource to `aks1/cnpg-demo`.
+- Applications `aks1-cnpg-demo`, `aks1-cnpg-dev`, `aks1-cnpg-uat`, and `aks1-cnpg-prod` deploy PostgreSQL `Cluster` resources to their target namespaces.
 
 ## Data plane
 
 - CNPG operator namespace: `cnpg-system`
-- PostgreSQL namespace: `cnpg-demo`
-- Cluster resource: `postgresql.cnpg.io/v1, kind=Cluster, name=app-db`
+- PostgreSQL namespaces: `cnpg-demo`, `cnpg-dev`, `cnpg-uat`, `cnpg-prod`
+- Cluster resource per namespace: `postgresql.cnpg.io/v1, kind=Cluster, name=app-db`
 - Pod naming: `<cluster>-<instanceIndex>`, current: `app-db-1`
 
 ## Services
@@ -22,7 +22,7 @@
 
 ## Storage
 
-- PVC: `cnpg-demo/app-db-1`
+- PVCs (examples): `cnpg-demo/app-db-1`, `cnpg-dev/app-db-1`, `cnpg-uat/app-db-1`, `cnpg-prod/app-db-1`
 - StorageClass: `default`
 - Provisioner: `disk.csi.azure.com`
 - SKU: `StandardSSD_ZRS`
@@ -30,7 +30,12 @@
 
 ## HA posture
 
-Current manifest uses `instances: 1`, so this is a single-instance deployment.
+Current overlays use:
+
+- demo: `instances: 1`
+- dev: `instances: 1`
+- uat: `instances: 2`
+- prod: `instances: 3`
 
 For HA, use at least:
 
