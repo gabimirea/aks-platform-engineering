@@ -15,7 +15,7 @@ Flow:
 1. `clusters` app (in `gitops-aks`) applies CAPZ manifests under `gitops/clusters/capz`.
 2. `aks1-appset` creates Argo `Application` `aks1`, which creates the `aks1` Kubernetes cluster.
 3. `AKS1-CNPG-Operator-ArgoApp` installs CNPG operator into `aks1`.
-4. `AKS1-CNPG-Demo-ArgoApp` applies CNPG `Cluster` manifests from `gitops/apps/myapp/cnpg/base` into `aks1`.
+4. `AKS1-CNPG-Demo-ArgoApp` applies CNPG `Cluster` manifests from `gitops/apps/myapp/postgres/base` into `aks1`.
 
 ## Files in This Blueprint
 
@@ -36,27 +36,27 @@ Flow:
 
 - `gitops/apps/myapp/AKS1-CNPG-Demo-ArgoApp.yaml`
   - Argo `Application` targeting destination cluster `aks1`
-  - Deploys manifests from `gitops/apps/myapp/cnpg/base`
+  - Deploys manifests from `gitops/apps/myapp/postgres/base`
   - Namespace target: `cnpg-demo`
   - Has sync wave `"1"` so it runs after operator app
 
 ### CNPG demo manifests
 
-- `gitops/apps/myapp/cnpg/base/kustomization.yaml`
+- `gitops/apps/myapp/postgres/base/kustomization.yaml`
   - Kustomize entrypoint listing the CNPG demo resources
 
-- `gitops/apps/myapp/cnpg/base/namespace.yaml`
+- `gitops/apps/myapp/postgres/base/namespace.yaml`
   - Namespace `cnpg-demo`
 
-- `gitops/apps/myapp/cnpg/base/secret-superuser.yaml`
+- `gitops/apps/myapp/postgres/base/secret-superuser.yaml`
   - `kubernetes.io/basic-auth` secret for PostgreSQL superuser
   - Placeholder password (must be replaced)
 
-- `gitops/apps/myapp/cnpg/base/secret-app.yaml`
+- `gitops/apps/myapp/postgres/base/secret-app.yaml`
   - `kubernetes.io/basic-auth` secret for application user
   - Placeholder password (must be replaced)
 
-- `gitops/apps/myapp/cnpg/base/cluster.yaml`
+- `gitops/apps/myapp/postgres/base/cluster.yaml`
   - CNPG `Cluster` named `app-db`
   - PostgreSQL image `ghcr.io/cloudnative-pg/postgresql:16`
   - Single instance (`instances: 1`) for demo
