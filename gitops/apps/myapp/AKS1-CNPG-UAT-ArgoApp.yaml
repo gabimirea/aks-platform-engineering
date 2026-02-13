@@ -1,24 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: apps-deployment
+  name: aks1-cnpg-uat
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
     repoURL: https://github.com/gabimirea/aks-platform-engineering.git
     targetRevision: main
-    path: gitops/apps/_empty
-    #path: gitops/apps/myapp
-    #directory:
-    #  include: "{AKS1-CNPG-Operator-ArgoApp.yaml,AKS1-CNPG-Demo-ArgoApp.yaml,AKS1-CNPG-UAT-ArgoApp.yaml,AKS1-CNPG-Prod-ArgoApp.yaml,AKSStoreDemoArgoApp.yaml}"
+    path: gitops/apps/myapp/postgres/overlays/uat
   destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
+    name: aks1
+    namespace: cnpg-uat
   syncPolicy:
     automated:
-      allowEmpty: true
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
