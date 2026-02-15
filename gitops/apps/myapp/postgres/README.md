@@ -22,7 +22,7 @@ Flow:
 
 ### Cluster provisioning (CAPZ)
 
-- `gitops/clusters/capz/aks1-appset.yaml`
+- `gitops/clusters/capz/aks1/aks1-appset.yaml`
   - New CAPZ ApplicationSet for cluster `aks1`
   - Uses same identity/subscription annotation templating as existing `aks0` pattern
   - Sets `cluster.labels.environment: db`
@@ -96,7 +96,7 @@ Flow:
 ## Rollout Order (When You Decide to Deploy)
 
 Recommended sequence:
-1. Apply/sync `gitops/clusters/capz/aks1-appset.yaml` and wait until `aks1` cluster is ready.
+1. Apply/sync `gitops/clusters/capz/aks1/aks1-appset.yaml` and wait until `aks1` cluster is ready.
 2. Ensure `aks1` destination cluster is registered in Argo CD on `gitops-aks`.
 3. Apply/sync `AKS1-CNPG-Operator-ArgoApp.yaml`.
 4. Wait for CNPG operator pods/webhook to be healthy.
@@ -116,7 +116,7 @@ Before production use, update at least:
     - image tag/version
     - backup and monitoring sections
 - AKS cluster shape:
-  - `aks1-appset.yaml`:
+  - `gitops/clusters/capz/aks1/aks1-appset.yaml`:
     - region, Kubernetes version, VM SKU, pool config
 
 ## Security and Operations Notes
@@ -143,5 +143,5 @@ Target cluster (`aks1`) CNPG resources:
 
 - Remove `AKS1-CNPG-Demo-ArgoApp.yaml` to remove demo DB resources.
 - Remove `AKS1-CNPG-Operator-ArgoApp.yaml` after all CNPG-managed DB resources are gone.
-- Remove `aks1-appset.yaml` if you want to decommission the `aks1` cluster.
+- Remove `gitops/clusters/capz/aks1/aks1-appset.yaml` if you want to decommission the `aks1` cluster.
 - Ensure Argo finalizers and prune settings match your deletion expectations.

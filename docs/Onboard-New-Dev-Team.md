@@ -31,7 +31,7 @@ Optional for CAPZ only:
 ssh-keygen -m PEM -t rsa -b 4096
 ```
 
-Update the  `sshPublicKey` value in the `gitops/clusters/capz/aks-appset.yaml` file.
+Update the  `sshPublicKey` value in the `gitops/clusters/capz/aks0/aks-appset.yaml` file.
 
 After these changes, commit the changes to the git repo on your fork.
 
@@ -42,6 +42,13 @@ kubectl apply -f ../gitops/clusters/clusters-argo-applicationset.yaml
 ```
 
 The application will show up in the ArgoCD console and start provisioning the infrastructure in the `gitops/clusters/<capz/crossplane>` folder.  The metadata in that file is already present on the ArgoCD cluster from the initial `terraform apply` and can be seen in the management ArgoCD UI - under `Settings - Clusters - gitops-aks` cluster.  The team cluster creation will take a few minutes.
+
+For CAPZ, you can also deploy clusters independently:
+
+```bash
+kubectl apply -k ../gitops/clusters/capz/aks0
+kubectl apply -k ../gitops/clusters/capz/aks1
+```
 
 ## Connect to existing deployed workload cluster
 
