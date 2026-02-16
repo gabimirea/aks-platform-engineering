@@ -82,6 +82,10 @@ kubectl -n argocd get secret -l argocd.argoproj.io/secret-type=cluster -o name |
   ForEach-Object { kubectl -n argocd delete $_ }
 ```
 
+```bash
+kubectl config delete-context aks1
+```
+
 ### 2.5 Verify `aks0` deletion
 
 ```powershell
