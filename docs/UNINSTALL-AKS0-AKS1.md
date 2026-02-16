@@ -22,11 +22,42 @@ kubectl get nodes
 `aks0` is part of CAPZ `core` (`gitops/clusters/capz/core`). If parent `clusters` app is active, it may recreate `aks-appset`.
 
 ```powershell
-# Remove/disable aks0 from git first (recommended), then sync Argo:
-# gitops/clusters/capz/core/kustomization.yaml -> remove ../aks0
+# REQUIRED: remove aks0 from Git first, then sync Argo:
+# edit gitops/clusters/capz/core/kustomization.yaml and remove this line:
+#   - ../aks0
+# commit + push, then force Argo refresh:
+kubectl -n argocd annotate application clusters argocd.argoproj.io/refresh=hard --overwrite
+
+# Verify aks0 appset is no longer desired from Git:
+kubectl -n argocd get applicationset aks-appset --ignore-not-found
 
 # Defensive cleanup in cluster:
 kubectl -n argocd delete applicationset aks-appset --ignore-not-found
+```
+
+If you cannot push Git changes immediately, pause Argo reconciliation temporarily before deleting `aks0` resources:
+
+```powershell
+# Hard stop (affects all Argo apps temporarily):
+$appController = kubectl -n argocd get statefulset -o name | Where-Object { $_ -match "application-controller" }
+$appSetController = kubectl -n argocd get deployment -o name | Where-Object { $_ -match "applicationset-controller" }
+if ($appController) { kubectl -n argocd scale $appController --replicas=0 }
+if ($appSetController) { kubectl -n argocd scale $appSetController --replicas=0 }
+
+# ... perform section 2.2 -> 2.5 ...
+
+# re-enable afterwards:
+if ($appController) { kubectl -n argocd scale $appController --replicas=1 }
+if ($appSetController) { kubectl -n argocd scale $appSetController --replicas=1 }
+```
+
+Quick diagnosis if `aks0` still comes back:
+
+```powershell
+# Shows who owns/recreates the app and from which repo/revision/path
+kubectl -n argocd get application aks0 -o jsonpath="{.metadata.ownerReferences[*].kind}{' '}{.metadata.ownerReferences[*].name}{'\n'}" 2>$null
+kubectl -n argocd get application clusters -o jsonpath="{.spec.source.repoURL}{' @ '}{.spec.source.targetRevision}{' path='}{.spec.source.path}{'\n'}" 2>$null
+kubectl -n argocd get applicationset clusters -o jsonpath="{.spec.template.spec.source.repoURL}{' @ '}{.spec.template.spec.source.targetRevision}{' path='}{.spec.template.spec.source.path}{'\n'}" 2>$null
 ```
 
 ### 2.2 Remove Argo apps targeting aks0
@@ -79,12 +110,13 @@ Expected: `aks0` absent from `kubectl get cluster` and Azure returns `ResourceNo
 
 ### 3.1 Stop GitOps reconciliation for aks1 resources
 
-If you enabled optional aks1 onboarding, remove/disable this file from Git and sync:
+If you enabled optional aks1 onboarding, remove/disable this file from Git and sync (required to avoid re-creation):
 - `gitops/clusters/capz/optional/aks1-argo-applicationset.yaml`
 
 Then cleanup live objects:
 
 ```powershell
+kubectl -n argocd annotate application clusters argocd.argoproj.io/refresh=hard --overwrite
 kubectl -n argocd delete applicationset clusters-capz-aks1 --ignore-not-found
 kubectl -n argocd delete applicationset aks1-appset --ignore-not-found
 ```
