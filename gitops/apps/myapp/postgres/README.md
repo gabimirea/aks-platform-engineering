@@ -1,42 +1,43 @@
-# CloudNativePG GitOps Layout for `aks1`
+# CloudNativePG GitOps Layout for `aks0`
 
-This folder documents a concrete GitOps blueprint to run PostgreSQL on a dedicated CAPZ-managed AKS cluster (`aks1`) using CloudNativePG (CNPG).
+This folder documents a concrete GitOps blueprint to run PostgreSQL on a dedicated CAPZ-managed AKS cluster (`aks0`) using CloudNativePG (CNPG).
 
 This is a file layout and operating guide only. Files are prepared to be applied later through Argo CD, but creating these files alone does not deploy anything.
 
 ## Architecture Intent
 
 - Management cluster: `gitops-aks` (Argo CD control plane)
-- Workload DB cluster: `aks1` (created by CAPZ)
-- DB operator: CNPG (installed on `aks1`)
-- DB workload: CNPG `Cluster` (`app-db`) across `demo`, `dev`, `uat`, and `prod` overlays on `aks1`
+- Workload DB cluster: `aks0` (created by CAPZ)
+- DB operator: CNPG (installed on `aks0`)
+- DB workload: CNPG `Cluster` (`app-db`) across `demo`, `dev`, `uat`, and `prod` overlays on `aks0`
+- Demo app cluster: `aks1` (separate workload cluster for demo applications)
 
 Flow:
 1. `clusters` app (in `gitops-aks`) applies CAPZ manifests under `gitops/clusters/capz`.
-2. `aks1-appset` creates Argo `Application` `aks1`, which creates the `aks1` Kubernetes cluster.
-3. `AKS1-CNPG-Operator-ArgoApp` installs CNPG operator into `aks1`.
-4. `AKS1-CNPG-Demo-ArgoApp` applies CNPG `Cluster` manifests from `gitops/apps/myapp/postgres/overlays/demo` into `aks1`.
-5. `AKS1-CNPG-Dev-ArgoApp`, `AKS1-CNPG-UAT-ArgoApp`, and `AKS1-CNPG-Prod-ArgoApp` apply environment overlays for `cnpg-dev`, `cnpg-uat`, and `cnpg-prod`.
+2. `aks-appset` creates Argo `Application` `aks0`, which creates the `aks0` Kubernetes cluster.
+3. `AKS1-CNPG-Operator-ArgoApp` (legacy filename) installs CNPG operator into `aks0`.
+4. `AKS1-CNPG-Demo-ArgoApp` (legacy filename) applies CNPG `Cluster` manifests from `gitops/apps/myapp/postgres/overlays/demo` into `aks0`.
+5. `AKS1-CNPG-Dev-ArgoApp`, `AKS1-CNPG-UAT-ArgoApp`, and `AKS1-CNPG-Prod-ArgoApp` (legacy filenames) apply environment overlays for `cnpg-dev`, `cnpg-uat`, and `cnpg-prod`.
 
 ## Files in This Blueprint
 
 ### Cluster provisioning (CAPZ)
 
-- `gitops/clusters/capz/aks1/aks1-appset.yaml`
-  - New CAPZ ApplicationSet for cluster `aks1`
-  - Uses same identity/subscription annotation templating as existing `aks0` pattern
+- `gitops/clusters/capz/aks0/aks-appset.yaml`
+  - CAPZ ApplicationSet for cluster `aks0`
+  - Uses identity/subscription annotation templating from cluster metadata
   - Sets `cluster.labels.environment: db`
   - Includes CAPZ drift ignore rules used in this repo
 
-### Argo apps for DB platform on `aks1`
+### Argo apps for DB platform on `aks0`
 
 - `gitops/apps/myapp/AKS1-CNPG-Operator-ArgoApp.yaml`
-  - Argo `Application` targeting destination cluster `aks1`
+  - Argo `Application` targeting destination cluster `aks0`
   - Installs CNPG Helm chart (`cloudnative-pg`) in namespace `cnpg-system`
   - Has sync wave `"0"` so operator installs before DB resources
 
 - `gitops/apps/myapp/AKS1-CNPG-Demo-ArgoApp.yaml`
-  - Argo `Application` targeting destination cluster `aks1`
+  - Argo `Application` targeting destination cluster `aks0`
   - Deploys manifests from `gitops/apps/myapp/postgres/overlays/demo`
   - Namespace target: `cnpg-demo`
   - Has sync wave `"1"` so it runs after operator app
@@ -97,8 +98,8 @@ Flow:
 
 Recommended sequence:
 1. If CAPZ optional cluster onboarding is enabled in your environment, apply `gitops/clusters/capz/optional/aks1-argo-applicationset.yaml` on the management cluster.
-2. Apply/sync `gitops/clusters/capz/aks1/aks1-appset.yaml` and wait until `aks1` cluster is ready.
-3. Ensure `aks1` destination cluster is registered in Argo CD on `gitops-aks`.
+2. Apply/sync `gitops/clusters/capz/aks0/aks-appset.yaml` and wait until `aks0` cluster is ready.
+3. Ensure `aks0` destination cluster is registered in Argo CD on `gitops-aks`.
 4. Apply/sync `AKS1-CNPG-Operator-ArgoApp.yaml`.
 5. Wait for CNPG operator pods/webhook to be healthy.
 6. Apply/sync `AKS1-CNPG-Demo-ArgoApp.yaml`.
@@ -117,7 +118,7 @@ Before production use, update at least:
     - image tag/version
     - backup and monitoring sections
 - AKS cluster shape:
-  - `gitops/clusters/capz/aks1/aks1-appset.yaml`:
+  - `gitops/clusters/capz/aks0/aks-appset.yaml`:
     - region, Kubernetes version, VM SKU, pool config
 
 ## Security and Operations Notes
@@ -135,14 +136,14 @@ Management cluster (`gitops-aks`) Argo:
 - `kubectl -n argocd get applications`
 - `kubectl -n argocd get applicationsets`
 
-Target cluster (`aks1`) CNPG resources:
-- `kubectl --context <aks1-context> -n cnpg-system get pods`
-- `kubectl --context <aks1-context> -n cnpg-demo get cluster,po,svc,secrets`
-- `kubectl --context <aks1-context> -n cnpg-demo describe cluster app-db`
+Target cluster (`aks0`) CNPG resources:
+- `kubectl --context <aks0-context> -n cnpg-system get pods`
+- `kubectl --context <aks0-context> -n cnpg-demo get cluster,po,svc,secrets`
+- `kubectl --context <aks0-context> -n cnpg-demo describe cluster app-db`
 
 ## Rollback / Cleanup Strategy
 
 - Remove `AKS1-CNPG-Demo-ArgoApp.yaml` to remove demo DB resources.
 - Remove `AKS1-CNPG-Operator-ArgoApp.yaml` after all CNPG-managed DB resources are gone.
-- Remove `gitops/clusters/capz/aks1/aks1-appset.yaml` if you want to decommission the `aks1` cluster.
+- Remove `gitops/clusters/capz/aks0/aks-appset.yaml` if you want to decommission the `aks0` cluster.
 - Ensure Argo finalizers and prune settings match your deletion expectations.
