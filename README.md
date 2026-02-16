@@ -97,6 +97,7 @@ echo $KUBECONFIG
 
 ```shell
 # Get the initial admin password and the IP address of the ArgoCD web interface.
+argocd login 9.223.201.91 --username admin --password 9rvkRKbdzFUHt08T --insecure
 kubectl get secrets argocd-initial-admin-secret -n argocd --template="{{index .data.password | base64decode}}"
 kubectl get svc -n argocd argo-cd-argocd-server
 ```
