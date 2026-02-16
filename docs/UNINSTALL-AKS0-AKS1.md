@@ -60,9 +60,9 @@ kubectl delete azuremanagedmachinepool -l "cluster.x-k8s.io/cluster-name=aks0" -
 # If AKS was recreated and endpoint changed, remove stale secret explicitly (example):
 kubectl -n argocd delete secret cluster-aks0-3dzx89ki.hcp.swedencentral.azmk8s.io-3454713729 --ignore-not-found
 
-# Generic cleanup for any aks0 cluster secret:
+# Generic cleanup for aks0/aks1 cluster secrets:
 kubectl -n argocd get secret -l argocd.argoproj.io/secret-type=cluster -o name |
-  Where-Object { $_ -match 'aks0' } |
+  Where-Object { $_ -match 'aks0|aks1' } |
   ForEach-Object { kubectl -n argocd delete $_ }
 ```
 
@@ -116,9 +116,9 @@ kubectl delete azuremanagedmachinepool -l "cluster.x-k8s.io/cluster-name=aks1" -
 ### 3.4 Remove Argo destination cluster secret for aks1
 
 ```powershell
-# Generic cleanup for any aks1 cluster secret:
+# Generic cleanup for aks0/aks1 cluster secrets:
 kubectl -n argocd get secret -l argocd.argoproj.io/secret-type=cluster -o name |
-  Where-Object { $_ -match 'aks1' } |
+  Where-Object { $_ -match 'aks0|aks1' } |
   ForEach-Object { kubectl -n argocd delete $_ }
 ```
 
