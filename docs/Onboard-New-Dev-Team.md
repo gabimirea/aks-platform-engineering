@@ -43,6 +43,13 @@ kubectl apply -f ../gitops/clusters/clusters-argo-applicationset.yaml
 
 The application will show up in the ArgoCD console and start provisioning the infrastructure in the `gitops/clusters/<capz/crossplane>` folder.  The metadata in that file is already present on the ArgoCD cluster from the initial `terraform apply` and can be seen in the management ArgoCD UI - under `Settings - Clusters - gitops-aks` cluster.  The team cluster creation will take a few minutes.
 
+For CAPZ, the default sync now provisions `core` only (`addons` + `aks0`).
+To enable `aks1` later while keeping Argo ApplicationSet behavior, apply:
+
+```bash
+kubectl apply -f ../gitops/clusters/capz/optional/aks1-argo-applicationset.yaml
+```
+
 For CAPZ, you can also deploy clusters independently:
 
 ```bash

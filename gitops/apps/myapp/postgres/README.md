@@ -96,12 +96,13 @@ Flow:
 ## Rollout Order (When You Decide to Deploy)
 
 Recommended sequence:
-1. Apply/sync `gitops/clusters/capz/aks1/aks1-appset.yaml` and wait until `aks1` cluster is ready.
-2. Ensure `aks1` destination cluster is registered in Argo CD on `gitops-aks`.
-3. Apply/sync `AKS1-CNPG-Operator-ArgoApp.yaml`.
-4. Wait for CNPG operator pods/webhook to be healthy.
-5. Apply/sync `AKS1-CNPG-Demo-ArgoApp.yaml`.
-6. Verify CNPG `Cluster` and PostgreSQL pod health.
+1. If CAPZ optional cluster onboarding is enabled in your environment, apply `gitops/clusters/capz/optional/aks1-argo-applicationset.yaml` on the management cluster.
+2. Apply/sync `gitops/clusters/capz/aks1/aks1-appset.yaml` and wait until `aks1` cluster is ready.
+3. Ensure `aks1` destination cluster is registered in Argo CD on `gitops-aks`.
+4. Apply/sync `AKS1-CNPG-Operator-ArgoApp.yaml`.
+5. Wait for CNPG operator pods/webhook to be healthy.
+6. Apply/sync `AKS1-CNPG-Demo-ArgoApp.yaml`.
+7. Verify CNPG `Cluster` and PostgreSQL pod health.
 
 ## Customization Points
 

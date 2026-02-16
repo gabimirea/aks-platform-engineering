@@ -32,7 +32,7 @@ kubectl -n argocd patch application aks1-cnpg-demo --type merge -p '{"metadata":
 
 kubectl -n argocd delete applicationset clusters --ignore-not-found
 kubectl -n argocd delete application clusters --ignore-not-found
-kubectl -n argocd delete applicationset aks-appset aks1-appset --ignore-not-found
+kubectl -n argocd delete applicationset aks-appset aks1-appset clusters-capz-aks1 --ignore-not-found
 kubectl -n argocd delete application aks0 aks1 aks0-aks-store-demo --ignore-not-found
 kubectl -n argocd delete application aks1-cnpg-demo aks1-cnpg-operator --ignore-not-found
 ```
@@ -131,6 +131,6 @@ kubectl -n argocd get secret -l argocd.argoproj.io/secret-type=cluster
 
 Expected:
 - No `aks0` / `aks1` clusters in `kubectl get cluster`
-- No `aks-appset` / `aks1-appset`
+- No `aks-appset` / `aks1-appset` / `clusters-capz-aks1`
 - No `aks0` / `aks1` / `aks1-cnpg-*` applications
 - No Argo cluster secrets for `aks0` / `aks1`
