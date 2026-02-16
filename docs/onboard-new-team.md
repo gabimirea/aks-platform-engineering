@@ -1,4 +1,4 @@
-# Onboarding New Dev Team
+# Onboarding New Team
 
 <!-- ADDED -->
 > **Important:** Before applying any changes or creating new ArgoCD applications, make sure your current kubecontext is pointing to the **management cluster**.  
@@ -11,7 +11,7 @@
 > kubectl config use-context <management-cluster-context>
 > ```
 
-Now that the management cluster is up and running, the next step is to onboard a new development team. This involves creating new workload cluster(s) and necessary infrastructure for the team to deploy their applications.
+Now that the management cluster is up and running, the next step is to onboard a new team. This involves creating new workload cluster(s) and necessary infrastructure for that team to deploy their applications.
 
 ## Setup a new Team infrastructure using ArgoCD
 

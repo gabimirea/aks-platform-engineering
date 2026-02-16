@@ -117,9 +117,9 @@ The username for the ArgoCD UI login is `admin`.
 
 ## Next Steps
 
-Learn how to define your own cluster, infrastructure, and hand off to the development team the access to the AKS cluster and ArgoCD deployment UI in [this article](./docs/Onboard-New-Dev-Team.md).
+Learn how to define your own cluster, infrastructure, and hand off access to the AKS cluster and ArgoCD deployment UI in [this article](./docs/onboard-new-team.md).
 
-If you need to decommission workload clusters `aks0` and `aks1` (including CNPG/PostgreSQL on `aks1`), use this runbook: [Clean Uninstall: aks0 + aks1](./docs/UNINSTALL-AKS0-AKS1.md).
+If you need to decommission workload clusters `aks0` and `aks1` (including CNPG/PostgreSQL on `aks1`), use this runbook: [Clean Uninstall: aks0 + aks1](./docs/uninstall-aks0-aks1.md).
 
 ## Trademarks
 
