@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aks0-aks-store-demo
+  name: aks1-aks-store-demo
   namespace: argocd
 spec:
   project: default
@@ -12,7 +12,7 @@ spec:
     path: gitops/apps/myapp/aks-store-demo-overlay
 
   destination:
-    name: aks0
+    name: aks1
     namespace: pets
 
   syncPolicy:
