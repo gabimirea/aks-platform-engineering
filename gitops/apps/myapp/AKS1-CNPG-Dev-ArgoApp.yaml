@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aks1-cnpg-dev
+  name: aks0-cnpg-dev
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -14,7 +14,7 @@ spec:
     targetRevision: main
     path: gitops/apps/myapp/postgres/overlays/dev
   destination:
-    name: aks1
+    name: aks0
     namespace: cnpg-dev
   syncPolicy:
     automated:

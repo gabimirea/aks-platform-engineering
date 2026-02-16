@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aks1-cnpg-operator
+  name: aks0-cnpg-operator
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -14,7 +14,7 @@ spec:
     chart: cloudnative-pg
     targetRevision: 0.22.1
   destination:
-    name: aks1
+    name: aks0
     namespace: cnpg-system
   syncPolicy:
     automated:
