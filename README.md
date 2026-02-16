@@ -75,7 +75,7 @@ Alternatively, consider changing the example `tvars` file to match your desired 
 
 ```bash
 # For capz control plane
-terraform apply -var gitops_addons_org=https://github.com/azure-samples --auto-approve
+terraform apply -var gitops_addons_org=https://github.com/gabimirea --auto-approve
 
 # For crossplane control plane
 terraform apply -var gitops_addons_org=https://github.com/azure-samples \
