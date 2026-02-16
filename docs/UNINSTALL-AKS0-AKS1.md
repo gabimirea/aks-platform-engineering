@@ -35,29 +35,13 @@ kubectl -n argocd get applicationset aks-appset --ignore-not-found
 kubectl -n argocd delete applicationset aks-appset --ignore-not-found
 ```
 
-If you cannot push Git changes immediately, pause Argo reconciliation temporarily before deleting `aks0` resources:
+If you cannot push Git changes immediately, pause reconciliation temporarily (this affects all ApplicationSets) before deleting `aks0` resources:
 
 ```powershell
-# Hard stop (affects all Argo apps temporarily):
-$appController = kubectl -n argocd get statefulset -o name | Where-Object { $_ -match "application-controller" }
-$appSetController = kubectl -n argocd get deployment -o name | Where-Object { $_ -match "applicationset-controller" }
-if ($appController) { kubectl -n argocd scale $appController --replicas=0 }
-if ($appSetController) { kubectl -n argocd scale $appSetController --replicas=0 }
-
+kubectl -n argocd scale deployment argocd-applicationset-controller --replicas=0
 # ... perform section 2.2 -> 2.5 ...
-
 # re-enable afterwards:
-if ($appController) { kubectl -n argocd scale $appController --replicas=1 }
-if ($appSetController) { kubectl -n argocd scale $appSetController --replicas=1 }
-```
-
-Quick diagnosis if `aks0` still comes back:
-
-```powershell
-# Shows who owns/recreates the app and from which repo/revision/path
-kubectl -n argocd get application aks0 -o jsonpath="{.metadata.ownerReferences[*].kind}{' '}{.metadata.ownerReferences[*].name}{'\n'}" 2>$null
-kubectl -n argocd get application clusters -o jsonpath="{.spec.source.repoURL}{' @ '}{.spec.source.targetRevision}{' path='}{.spec.source.path}{'\n'}" 2>$null
-kubectl -n argocd get applicationset clusters -o jsonpath="{.spec.template.spec.source.repoURL}{' @ '}{.spec.template.spec.source.targetRevision}{' path='}{.spec.template.spec.source.path}{'\n'}" 2>$null
+kubectl -n argocd scale deployment argocd-applicationset-controller --replicas=1
 ```
 
 ### 2.2 Remove Argo apps targeting aks0
@@ -81,6 +65,7 @@ kubectl -n argocd delete application aks0-cnpg-operator aks0-cnpg-demo aks0-cnpg
 kubectl delete cluster aks0 --ignore-not-found
 kubectl delete azuremanagedcontrolplane aks0 --ignore-not-found
 kubectl delete azuremanagedcluster aks0 --ignore-not-found
+
 kubectl delete machinepool -l "cluster.x-k8s.io/cluster-name=aks0" --ignore-not-found
 kubectl delete azuremanagedmachinepool -l "cluster.x-k8s.io/cluster-name=aks0" --ignore-not-found
 ```
