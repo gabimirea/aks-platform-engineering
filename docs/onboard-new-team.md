@@ -37,7 +37,7 @@ After these changes, commit the changes to the git repo on your fork.
 
 Next, create an ArgoCD application to sync the new team clusters by running this command against the management cluster:
 
-```
+```bash
 kubectl apply -f ../gitops/clusters/clusters-argo-applicationset.yaml
 ```
 
