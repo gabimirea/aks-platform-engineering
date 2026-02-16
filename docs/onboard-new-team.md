@@ -64,8 +64,11 @@ To connect to the existing AKS clusters which have been deployed above do the fo
 With Crossplane:
 
 ```bash
-az aks get-credentials -n my-app-cluster-dev -g my-app-cluster-dev
+az aks get-credentials --resource-group aks1 --name aks1 --overwrite-existing
 kubelogin convert-kubeconfig -l azurecli
+argocd login 9.223.201.91 --username admin --password 9rvkRKbdzFUHt08T --insecure
+argocd cluster add aks1
+argocd cluster list
 ```
 
 With CAPZ:
