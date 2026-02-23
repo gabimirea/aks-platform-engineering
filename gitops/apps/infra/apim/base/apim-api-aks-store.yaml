@@ -1,0 +1,30 @@
+apiVersion: apimanagement.azure.com/v1api20220801
+kind: Api
+metadata:
+  name: aks-store-api
+  namespace: default
+spec:
+  owner:
+    name: apim-service
+  azureName: aks-store-api
+  displayName: AKS Store API
+  path: aksstore
+  protocols:
+    - https
+  serviceUrl: http://replace-with-aks-store-lb-ip-or-dns
+  subscriptionRequired: true
+  format: openapi
+  value: |
+    openapi: 3.0.1
+    info:
+      title: AKS Store API
+      version: "1.0.0"
+      description: Minimal API surface for routing AKS Store traffic through APIM
+    paths:
+      /:
+        get:
+          operationId: getStoreFrontRoot
+          summary: Get store front root page
+          responses:
+            "200":
+              description: OK

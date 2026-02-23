@@ -1,0 +1,10 @@
+apiVersion: apimanagement.azure.com/v1api20220801
+kind: ProductApi
+metadata:
+  name: aks-store-product-api
+  namespace: default
+spec:
+  owner:
+    name: aks-store-product
+  # Must match the API identifier (azureName) being attached to this product.
+  azureName: aks-store-api

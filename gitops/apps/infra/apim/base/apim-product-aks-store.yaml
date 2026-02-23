@@ -1,0 +1,13 @@
+apiVersion: apimanagement.azure.com/v1api20220801
+kind: Product
+metadata:
+  name: aks-store-product
+  namespace: default
+spec:
+  owner:
+    name: apim-service
+  azureName: aks-store-product
+  displayName: AKS Store Product
+  description: Product for AKS Store API access via subscription keys
+  state: published
+  subscriptionRequired: true
