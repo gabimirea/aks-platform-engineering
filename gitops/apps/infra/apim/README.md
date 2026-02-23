@@ -109,6 +109,23 @@ Expected:
 - `200` and AKS Store front page content if backend URL is correct.
 - `401`/`403` if key is missing/invalid.
 
+### Health probe endpoint
+
+A service policy is included to return a synthetic health response from APIM at:
+
+```bash
+curl -H "Ocp-Apim-Subscription-Key: <YOUR_KEY>" \
+  "https://<APIM_NAME>.azure-api.net/aksstore/health"
+```
+
+Expected response:
+
+```json
+{"status":"ok","service":"apim","path":"/aksstore/health"}
+```
+
+This probe is served directly by APIM policy (not by the backend service), so it is useful for quick gateway/key/path validation.
+
 ## 5) Uninstall
 
 Choose the same method you used for install.

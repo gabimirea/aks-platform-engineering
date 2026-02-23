@@ -1,0 +1,36 @@
+apiVersion: apimanagement.azure.com/v1api20220801
+kind: Policy
+metadata:
+  name: apim-service-policy
+  namespace: default
+spec:
+  owner:
+    name: apim-service
+  azureName: policy
+  format: rawxml
+  value: |
+    <policies>
+      <inbound>
+        <choose>
+          <when condition="@(((string)context.Request.OriginalUrl.Path).Equals(&quot;/aksstore/health&quot;, System.StringComparison.OrdinalIgnoreCase))">
+            <return-response>
+              <set-status code="200" reason="OK" />
+              <set-header name="Content-Type" exists-action="override">
+                <value>application/json</value>
+              </set-header>
+              <set-body>{"status":"ok","service":"apim","path":"/aksstore/health"}</set-body>
+            </return-response>
+          </when>
+        </choose>
+        <base />
+      </inbound>
+      <backend>
+        <base />
+      </backend>
+      <outbound>
+        <base />
+      </outbound>
+      <on-error>
+        <base />
+      </on-error>
+    </policies>
