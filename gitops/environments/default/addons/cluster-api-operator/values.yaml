@@ -11,5 +11,8 @@ additionalDeployments:
     deployment:
       containers:
       - name: manager
+        env:
+          - name: AZURE_FEDERATED_TOKEN_FILE
+            value: /var/run/secrets/tokens/azure-identity
         args:
           --crd-pattern: "documentdb.azure.com/*;managedidentity.azure.com/*;keyvault.azure.com/*;resources.azure.com/*;apimanagement.azure.com/*"
