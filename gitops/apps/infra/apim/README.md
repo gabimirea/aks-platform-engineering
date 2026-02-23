@@ -111,7 +111,7 @@ Expected:
 
 ### Health probe endpoint
 
-A service policy is included to return a synthetic health response from APIM at:
+The API includes a `/health` operation and forwards it to the backend at:
 
 ```bash
 curl -H "Ocp-Apim-Subscription-Key: <YOUR_KEY>" \
@@ -121,10 +121,10 @@ curl -H "Ocp-Apim-Subscription-Key: <YOUR_KEY>" \
 Expected response:
 
 ```json
-{"status":"ok","service":"apim","path":"/aksstore/health"}
+{"status":"ok","version":"2.1.0"}
 ```
 
-This probe is served directly by APIM policy (not by the backend service), so it is useful for quick gateway/key/path validation.
+This validates gateway/key/path and backend reachability together.
 
 ## 5) Uninstall
 

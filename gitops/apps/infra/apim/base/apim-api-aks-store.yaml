@@ -8,6 +8,7 @@ spec:
     name: apim-service
   azureName: aks-store-api
   displayName: AKS Store API
+  apiType: http
   path: aksstore
   protocols:
     - https
