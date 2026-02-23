@@ -6,4 +6,4 @@ metadata:
 spec:
   # Set this to the AKS Store LoadBalancer IP/DNS, for example:
   # http://20.1.2.3 or http://my-store.eastus.cloudapp.azure.com
-  serviceUrl: http://replace-with-aks-store-lb-ip-or-dns
+  serviceUrl: http://9.223.202.145
