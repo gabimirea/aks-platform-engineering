@@ -28,3 +28,10 @@ spec:
           responses:
             "200":
               description: OK
+      /health:
+        get:
+          operationId: getHealth
+          summary: APIM health probe endpoint
+          responses:
+            "200":
+              description: OK

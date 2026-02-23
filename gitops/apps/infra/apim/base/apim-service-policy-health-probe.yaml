@@ -6,7 +6,6 @@ metadata:
 spec:
   owner:
     name: apim-service
-  azureName: policy
   format: rawxml
   value: |
     <policies>
@@ -22,15 +21,8 @@ spec:
             </return-response>
           </when>
         </choose>
-        <base />
       </inbound>
-      <backend>
-        <base />
-      </backend>
-      <outbound>
-        <base />
-      </outbound>
-      <on-error>
-        <base />
-      </on-error>
+      <backend />
+      <outbound />
+      <on-error />
     </policies>
