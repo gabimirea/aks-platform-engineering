@@ -1,0 +1,17 @@
+apiVersion: apimanagement.azure.com/v1api20240501
+kind: Service
+metadata:
+  name: apim-service
+  namespace: default
+spec:
+  owner:
+    name: apim-rg
+  location: swedencentral
+  publisherEmail: platform-team@example.com
+  publisherName: Platform Team
+  sku:
+    name: Developer
+    capacity: 1
+  tags:
+    managed-by: gitops
+    workload: apim

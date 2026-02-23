@@ -1,0 +1,11 @@
+apiVersion: apimanagement.azure.com/v1api20240501
+kind: Service
+metadata:
+  name: apim-service
+  namespace: default
+spec:
+  azureName: apim-dev-change-me-001
+  publisherEmail: apim-owner@example.com
+  publisherName: APIM Dev Owner
+  tags:
+    environment: dev
