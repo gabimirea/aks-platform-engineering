@@ -1,0 +1,18 @@
+apiVersion: apimanagement.azure.com/v1api20220801
+kind: Policy
+metadata:
+  name: apim-service-policy
+  namespace: default
+spec:
+  owner:
+    name: apim-service
+  format: rawxml
+  value: |
+    <policies>
+      <inbound />
+      <backend>
+        <forward-request />
+      </backend>
+      <outbound />
+      <on-error />
+    </policies>

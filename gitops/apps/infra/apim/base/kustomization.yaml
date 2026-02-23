@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - resource-group.yaml
   - apim-service.yaml
+  - apim-service-policy-forward-request.yaml
   - apim-api-aks-store.yaml
   - apim-product-aks-store.yaml
   - apim-product-api-aks-store.yaml

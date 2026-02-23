@@ -8,6 +8,7 @@ From `gitops/apps/infra/apim/base`:
 
 - Azure Resource Group (`ResourceGroup`)
 - APIM instance (`Service`)
+- APIM service policy (`Policy`) with backend forward-request
 - APIM API (`Api`) at path `/aksstore`
 - APIM Product (`Product`) with `subscriptionRequired: true`
 - API to Product association (`ProductApi`)
@@ -166,6 +167,9 @@ Azure-side delete of APIM can also take significant time; resources may remain i
 
 ## Troubleshooting
 
+- APIM returns `200` with empty body:
+  - Verify service policy exists and includes `<forward-request />` in backend.
+  - Check `Policy` resource: `kubectl get policy.apimanagement.azure.com -n default`
 - `Api` is not ready:
   - Verify `spec.serviceUrl` points to a reachable AKS Store endpoint.
   - Confirm AKS Store service has external IP and responds directly.
