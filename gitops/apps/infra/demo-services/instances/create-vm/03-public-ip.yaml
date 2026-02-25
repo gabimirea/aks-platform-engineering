@@ -1,0 +1,14 @@
+apiVersion: network.azure.com/v1api20201101
+kind: PublicIPAddress
+metadata:
+  name: vm-sdc-001-pip
+  namespace: default
+  labels:
+    platform.demo/request: create-vm
+spec:
+  location: swedencentral
+  owner:
+    name: rg-vm-demo-001
+  sku:
+    name: Standard
+  publicIPAllocationMethod: Static
