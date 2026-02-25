@@ -1,0 +1,19 @@
+apiVersion: network.azure.com/v1api20201101
+kind: NetworkSecurityGroupsSecurityRule
+metadata:
+  name: vm-sdc-001-nsg-allow-ssh
+  namespace: default
+  labels:
+    platform.demo/request: create-vm
+spec:
+  owner:
+    name: vm-sdc-001-nsg
+  protocol: Tcp
+  sourcePortRange: "*"
+  destinationPortRange: "22"
+  sourceAddressPrefix: "*"
+  destinationAddressPrefix: "*"
+  access: Allow
+  priority: 101
+  direction: Inbound
+  description: Allow SSH from any source (demo only).
