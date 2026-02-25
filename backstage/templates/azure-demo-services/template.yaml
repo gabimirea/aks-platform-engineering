@@ -124,7 +124,7 @@ spec:
                   title: VM Admin Password
                   type: string
                   ui:field: Secret
-                  pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,72}$'
+                  pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,72}$'
                   description: Demo only. Consider using Key Vault + External Secrets for production.
                   ui:help: 6-72 chars, include uppercase, lowercase, number, and special character.
               required:

@@ -4,7 +4,6 @@ kind: ApplicationSet
 metadata:
   name: addons-cert-manager
 spec:
-  location: swedencentral
   syncPolicy:
     preserveResourcesOnDeletion: true
   generators:
