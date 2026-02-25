@@ -1,0 +1,16 @@
+apiVersion: network.azure.upbound.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: vm-sdc-001-nsg
+  namespace: default
+  labels:
+    platform.demo/request: create-vm
+    platform.demo/component: vm-sdc-001-nsg
+spec:
+  forProvider:
+    location: swedencentral
+    resourceGroupName: rg-vm-sdc-001
+    tags:
+      COST: T3
+  providerConfigRef:
+    name: default

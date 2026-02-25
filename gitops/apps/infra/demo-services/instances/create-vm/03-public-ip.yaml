@@ -1,0 +1,18 @@
+apiVersion: network.azure.upbound.io/v1beta1
+kind: PublicIP
+metadata:
+  name: vm-sdc-001-pip
+  namespace: default
+  labels:
+    platform.demo/request: create-vm
+    platform.demo/component: vm-sdc-001-pip
+spec:
+  forProvider:
+    allocationMethod: Static
+    location: swedencentral
+    resourceGroupName: rg-vm-sdc-001
+    sku: Standard
+    tags:
+      COST: T3
+  providerConfigRef:
+    name: default
