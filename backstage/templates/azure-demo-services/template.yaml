@@ -55,46 +55,60 @@ spec:
           title: Kubernetes Namespace
           type: string
           default: default
-
-    - title: Storage Account Fields
-      properties:
-        storageAccountName:
-          title: Storage Account Name
-          type: string
-          description: Used only when service type is storage-account.
-          pattern: '^[a-z0-9]{3,24}$'
-          ui:help: 3-24 lowercase letters or numbers.
-        storageSku:
-          title: Storage SKU
-          type: string
-          enum:
-            - Standard_LRS
-            - Standard_GRS
-            - Standard_RAGRS
-            - Standard_ZRS
-            - Premium_LRS
-          default: Standard_LRS
-
-    - title: Virtual Machine Fields
-      properties:
-        vmName:
-          title: VM Name
-          type: string
-          description: Used only when service type is virtual-machine.
-          pattern: '^[a-zA-Z0-9-]{1,64}$'
-        vmSize:
-          title: VM Size
-          type: string
-          default: Standard_B2s
-        vmAdminUsername:
-          title: VM Admin Username
-          type: string
-          default: azureuser
-        vmAdminPassword:
-          title: VM Admin Password
-          type: string
-          ui:widget: password
-          description: Demo only. Consider using Key Vault + External Secrets for production.
+      dependencies:
+        serviceType:
+          oneOf:
+            - properties:
+                serviceType:
+                  enum:
+                    - storage-account
+                storageAccountBaseName:
+                  title: Storage Account Base Name
+                  type: string
+                  pattern: '^[a-z0-9]{3,18}$'
+                  ui:help: 3-18 lowercase letters or numbers.
+                storageRandomCode:
+                  title: Storage Random Code
+                  type: string
+                  pattern: '^[a-z0-9]{4,6}$'
+                  ui:help: Add a 4-6 char random suffix, lowercase letters or numbers.
+                storageSku:
+                  title: Storage SKU
+                  type: string
+                  enum:
+                    - Standard_LRS
+                    - Standard_GRS
+                    - Standard_RAGRS
+                    - Standard_ZRS
+                    - Premium_LRS
+                  default: Standard_LRS
+              required:
+                - storageAccountBaseName
+                - storageRandomCode
+            - properties:
+                serviceType:
+                  enum:
+                    - virtual-machine
+                vmName:
+                  title: VM Name
+                  type: string
+                  pattern: '^[a-zA-Z0-9-]{1,64}$'
+                vmSize:
+                  title: VM Size
+                  type: string
+                  default: Standard_B2s
+                vmAdminUsername:
+                  title: VM Admin Username
+                  type: string
+                  default: azureuser
+                vmAdminPassword:
+                  title: VM Admin Password
+                  type: string
+                  ui:widget: password
+                  description: Demo only. Consider using Key Vault + External Secrets for production.
+              required:
+                - vmName
+                - vmAdminPassword
 
   steps:
     - id: generate-storage
@@ -109,7 +123,7 @@ spec:
           resourceGroupName: ${{ parameters.resourceGroupName }}
           location: ${{ parameters.location }}
           kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
-          storageAccountName: ${{ parameters.storageAccountName }}
+          storageAccountName: ${{ parameters.storageAccountBaseName + parameters.storageRandomCode }}
           storageSku: ${{ parameters.storageSku }}
 
     - id: generate-vm
