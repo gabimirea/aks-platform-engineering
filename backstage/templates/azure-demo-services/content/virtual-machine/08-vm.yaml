@@ -10,20 +10,21 @@ spec:
     adminPasswordSecretRef:
       name: ${{ values.vmName }}-admin-password
       key: password
+      namespace: ${{ values.kubernetesNamespace }}
     adminUsername: ${{ values.vmAdminUsername }}
     disablePasswordAuthentication: false
     location: ${{ values.location }}
     networkInterfaceIdsRefs:
       - name: ${{ values.vmName }}-nic
     osDisk:
-      caching: ReadWrite
-      storageAccountType: Standard_LRS
+      - caching: ReadWrite
+        storageAccountType: Standard_LRS
     resourceGroupName: ${{ values.resourceGroupName }}
     size: ${{ values.vmSize }}
     sourceImageReference:
-      publisher: Canonical
-      offer: 0001-com-ubuntu-server-jammy
-      sku: 22_04-lts
-      version: latest
+      - publisher: Canonical
+        offer: 0001-com-ubuntu-server-jammy
+        sku: 22_04-lts
+        version: latest
   providerConfigRef:
     name: ${{ values.providerConfigName }}

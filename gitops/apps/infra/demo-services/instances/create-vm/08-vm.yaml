@@ -10,20 +10,21 @@ spec:
     adminPasswordSecretRef:
       name: vm-sdc-001-admin-password
       key: password
+      namespace: default
     adminUsername: azureuser
     disablePasswordAuthentication: false
     location: swedencentral
     networkInterfaceIdsRefs:
       - name: vm-sdc-001-nic
     osDisk:
-      caching: ReadWrite
-      storageAccountType: Standard_LRS
+      - caching: ReadWrite
+        storageAccountType: Standard_LRS
     resourceGroupName: rg-vm-sdc-001
     size: Standard_B2s
     sourceImageReference:
-      publisher: Canonical
-      offer: 0001-com-ubuntu-server-jammy
-      sku: 22_04-lts
-      version: latest
+      - publisher: Canonical
+        offer: 0001-com-ubuntu-server-jammy
+        sku: 22_04-lts
+        version: latest
   providerConfigRef:
     name: default
