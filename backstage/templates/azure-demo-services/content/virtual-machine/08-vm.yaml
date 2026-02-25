@@ -1,0 +1,31 @@
+apiVersion: compute.azure.com/v1api20201201
+kind: VirtualMachine
+metadata:
+  name: ${{ values.vmName }}
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+spec:
+  location: ${{ values.location }}
+  owner:
+    name: ${{ values.resourceGroupName }}
+  hardwareProfile:
+    vmSize: ${{ values.vmSize }}
+  networkProfile:
+    networkInterfaces:
+      - reference:
+          group: network.azure.com
+          kind: NetworkInterface
+          name: ${{ values.vmName }}-nic
+  osProfile:
+    computerName: ${{ values.vmName }}
+    adminUsername: ${{ values.vmAdminUsername }}
+    adminPassword:
+      name: ${{ values.vmName }}-admin-password
+      key: password
+  storageProfile:
+    imageReference:
+      publisher: Canonical
+      offer: 0001-com-ubuntu-server-jammy
+      sku: 22_04-lts
+      version: latest

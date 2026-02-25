@@ -1,0 +1,9 @@
+apiVersion: resources.azure.com/v1api20200601
+kind: ResourceGroup
+metadata:
+  name: ${{ values.resourceGroupName }}
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+spec:
+  location: ${{ values.location }}

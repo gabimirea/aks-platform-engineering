@@ -1,0 +1,15 @@
+apiVersion: storage.azure.com/v1api20230101
+kind: StorageAccount
+metadata:
+  name: ${{ values.storageAccountName }}
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+spec:
+  location: ${{ values.location }}
+  owner:
+    name: ${{ values.resourceGroupName }}
+  kind: StorageV2
+  accessTier: Hot
+  sku:
+    name: ${{ values.storageSku }}

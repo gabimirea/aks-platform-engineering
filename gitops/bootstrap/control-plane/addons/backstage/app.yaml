@@ -55,6 +55,10 @@ spec:
                   rules:
                     - allow: [Template]
                 - type: url
+                  target: https://github.com/gabimirea/aks-platform-engineering/blob/main/backstage/templates/azure-demo-services/template.yaml
+                  rules:
+                    - allow: [Template]
+                - type: url
                   target: https://github.com/gabimirea/aks-platform-engineering/blob/main/gitops/apps/myapp/postgres/catalog-info.yaml
                   rules:
                     - allow: [Component, System, Resource, API, Location, Group]

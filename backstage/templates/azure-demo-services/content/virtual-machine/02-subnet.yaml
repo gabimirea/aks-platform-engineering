@@ -1,0 +1,11 @@
+apiVersion: network.azure.com/v1api20201101
+kind: VirtualNetworksSubnet
+metadata:
+  name: ${{ values.vmName }}-subnet
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+spec:
+  owner:
+    name: ${{ values.vmName }}-vnet
+  addressPrefix: 10.20.1.0/24

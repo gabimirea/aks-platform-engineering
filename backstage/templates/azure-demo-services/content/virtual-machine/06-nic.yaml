@@ -1,0 +1,29 @@
+apiVersion: network.azure.com/v1api20201101
+kind: NetworkInterface
+metadata:
+  name: ${{ values.vmName }}-nic
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+spec:
+  location: ${{ values.location }}
+  owner:
+    name: ${{ values.resourceGroupName }}
+  networkSecurityGroup:
+    reference:
+      group: network.azure.com
+      kind: NetworkSecurityGroup
+      name: ${{ values.vmName }}-nsg
+  ipConfigurations:
+    - name: ipconfig1
+      privateIPAllocationMethod: Dynamic
+      publicIPAddress:
+        reference:
+          group: network.azure.com
+          kind: PublicIPAddress
+          name: ${{ values.vmName }}-pip
+      subnet:
+        reference:
+          group: network.azure.com
+          kind: VirtualNetworksSubnet
+          name: ${{ values.vmName }}-subnet

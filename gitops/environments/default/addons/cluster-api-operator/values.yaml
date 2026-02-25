@@ -15,4 +15,4 @@ additionalDeployments:
           - name: AZURE_FEDERATED_TOKEN_FILE
             value: /var/run/secrets/tokens/azure-identity
         args:
-          --crd-pattern: "documentdb.azure.com/*;managedidentity.azure.com/*;keyvault.azure.com/*;resources.azure.com/*;apimanagement.azure.com/*"
+          --crd-pattern: "documentdb.azure.com/*;managedidentity.azure.com/*;keyvault.azure.com/*;resources.azure.com/*;apimanagement.azure.com/*;storage.azure.com/*;network.azure.com/*;compute.azure.com/*"

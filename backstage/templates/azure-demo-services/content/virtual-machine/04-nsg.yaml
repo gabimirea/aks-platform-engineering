@@ -1,0 +1,11 @@
+apiVersion: network.azure.com/v1api20201101
+kind: NetworkSecurityGroup
+metadata:
+  name: ${{ values.vmName }}-nsg
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+spec:
+  location: ${{ values.location }}
+  owner:
+    name: ${{ values.resourceGroupName }}

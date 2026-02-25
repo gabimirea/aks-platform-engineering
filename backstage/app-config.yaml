@@ -88,6 +88,12 @@ catalog:
       rules:
         - allow: [Template]
 
+    # Local Azure demo services template
+    - type: file
+      target: ../../templates/azure-demo-services/template.yaml
+      rules:
+        - allow: [Template]
+
     # Local example organizational data
     - type: file
       target: ../../examples/org.yaml

@@ -125,3 +125,62 @@ If you need to decommission workload clusters `aks0` and `aks1` (with `aks0` use
 ## Trademarks
 
 Trademarks This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow Microsoft’s Trademark & Brand Guidelines. Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party’s policies.
+
+## 2. Backstage Portal Demo Services Record (VM + Storage Account)
+
+This section records the implementation of a Backstage-driven, GitOps workflow for two demo services:
+
+- Azure Storage Account
+- Azure Virtual Machine
+
+Provisioning strategy:
+
+- Developers submit requests from Backstage.
+- Backstage creates a pull request with manifests in this repository.
+- Argo CD reconciles merged manifests.
+- ASO provisions resources in Azure.
+
+Deletion strategy (same model as create):
+
+- Remove the same request folder via pull request.
+- Merge the pull request.
+- Argo CD prunes resources and ASO reconciles delete in Azure.
+
+### Files Added
+
+- `backstage/templates/azure-demo-services/template.yaml`: Backstage software template to choose `storage-account` or `virtual-machine` and create a PR to this repo.
+- `backstage/templates/azure-demo-services/content/storage-account/resource-group.yaml`: ASO `ResourceGroup` manifest template for storage requests.
+- `backstage/templates/azure-demo-services/content/storage-account/storage-account.yaml`: ASO `StorageAccount` manifest template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/00-resource-group.yaml`: ASO `ResourceGroup` manifest template for VM requests.
+- `backstage/templates/azure-demo-services/content/virtual-machine/01-vnet.yaml`: ASO `VirtualNetwork` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/02-subnet.yaml`: ASO `VirtualNetworksSubnet` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/03-public-ip.yaml`: ASO `PublicIPAddress` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/04-nsg.yaml`: ASO `NetworkSecurityGroup` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/05-nsg-rule-ssh.yaml`: ASO SSH inbound rule template for demo access.
+- `backstage/templates/azure-demo-services/content/virtual-machine/06-nic.yaml`: ASO `NetworkInterface` template wired to subnet, NSG, and public IP.
+- `backstage/templates/azure-demo-services/content/virtual-machine/07-vm-admin-secret.yaml`: Kubernetes secret template for VM admin password (demo usage).
+- `backstage/templates/azure-demo-services/content/virtual-machine/08-vm.yaml`: ASO `VirtualMachine` template.
+- `gitops/apps/infra/DEMO-SERVICES-ArgoApp.yaml`: Argo CD application that syncs all demo service request folders.
+- `gitops/apps/infra/demo-services/README.md`: Lifecycle and delete behavior documentation for demo services.
+- `gitops/apps/infra/demo-services/instances/.gitkeep`: Placeholder to keep the instances folder in git.
+
+### Files Updated
+
+- `backstage/app-config.yaml`: Registered local template location for `azure-demo-services`.
+- `backstage/app-config.production.yaml`: Registered production template location for `azure-demo-services`.
+- `gitops/bootstrap/control-plane/addons/backstage/app.yaml`: Added catalog template location for the new portal template in deployed Backstage.
+- `gitops/apps/infra/kustomization.yaml`: Included `DEMO-SERVICES-ArgoApp.yaml` in infra app-of-apps.
+- `gitops/environments/default/addons/cluster-api-provider-azure/values.yaml`: Extended ASO CRD pattern with `storage.azure.com/*`, `network.azure.com/*`, and `compute.azure.com/*`.
+- `gitops/environments/default/addons/cluster-api-operator/values.yaml`: Extended ASO CRD pattern with `storage.azure.com/*`, `network.azure.com/*`, and `compute.azure.com/*`.
+- `docs/backstage.md`: Added documentation for the new VM/storage demo template and GitOps deletion flow.
+
+### Request Folder Contract
+
+Backstage PRs target this path:
+
+- `gitops/apps/infra/demo-services/instances/<request-name>/`
+
+Each request folder is the unit of lifecycle:
+
+- Create by adding the folder.
+- Delete by removing the folder.

@@ -19,6 +19,32 @@ In this project, Backstage is used to provide a unified developer portal that in
 - **Manage Services**: Using the Service Catalog to organize and manage microservices.
 - **Automate Workflows**: Using Software Templates to standardize project creation.
 
+## Demo Infrastructure Template (VM + Storage Account)
+
+This repository now includes a Backstage software template for two demo Azure services:
+
+- Storage Account
+- Virtual Machine (with required network resources)
+
+Template location:
+
+- `backstage/templates/azure-demo-services/template.yaml`
+
+When executed, the template creates a PR into:
+
+- `gitops/apps/infra/demo-services/instances/<request-name>/`
+
+Argo CD then syncs that folder through:
+
+- `gitops/apps/infra/DEMO-SERVICES-ArgoApp.yaml`
+
+Delete is handled with the same GitOps strategy:
+
+1. Open PR
+2. Remove `gitops/apps/infra/demo-services/instances/<request-name>/`
+3. Merge PR
+4. Argo CD prunes removed manifests and ASO reconciles deletion in Azure
+
 
 
 ## Getting Started

@@ -1,0 +1,160 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: azure-demo-services-pr-template
+  title: Azure Demo Services (VM or Storage)
+  description: Create a GitOps pull request to provision one demo Azure service with ASO.
+  tags:
+    - azure
+    - gitops
+    - infrastructure
+spec:
+  owner: user:guest
+  type: infrastructure
+
+  parameters:
+    - title: Request Settings
+      required:
+        - repoUrl
+        - requestName
+        - serviceType
+        - resourceGroupName
+        - location
+        - kubernetesNamespace
+      properties:
+        repoUrl:
+          title: Target Repository
+          type: string
+          description: Repository that Argo CD syncs from.
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+            requestUserCredentials:
+              secretsKey: USER_OAUTH_TOKEN
+              additionalScopes:
+                github:
+                  - repo
+        requestName:
+          title: Request Name
+          type: string
+          description: Folder name for this request under demo-services/instances.
+          pattern: '^[a-z0-9-]+$'
+          ui:help: Lowercase letters, numbers, and hyphens only.
+        serviceType:
+          title: Demo Service Type
+          type: string
+          enum:
+            - storage-account
+            - virtual-machine
+          default: storage-account
+        resourceGroupName:
+          title: Azure Resource Group
+          type: string
+          pattern: '^[a-zA-Z0-9._()\\-]+$'
+        location:
+          title: Azure Location
+          type: string
+          default: swedencentral
+        kubernetesNamespace:
+          title: Kubernetes Namespace
+          type: string
+          default: default
+
+    - title: Storage Account Fields
+      properties:
+        storageAccountName:
+          title: Storage Account Name
+          type: string
+          description: Used only when service type is storage-account.
+          pattern: '^[a-z0-9]{3,24}$'
+          ui:help: 3-24 lowercase letters or numbers.
+        storageSku:
+          title: Storage SKU
+          type: string
+          enum:
+            - Standard_LRS
+            - Standard_GRS
+            - Standard_RAGRS
+            - Standard_ZRS
+            - Premium_LRS
+          default: Standard_LRS
+
+    - title: Virtual Machine Fields
+      properties:
+        vmName:
+          title: VM Name
+          type: string
+          description: Used only when service type is virtual-machine.
+          pattern: '^[a-zA-Z0-9-]{1,64}$'
+        vmSize:
+          title: VM Size
+          type: string
+          default: Standard_B2s
+        vmAdminUsername:
+          title: VM Admin Username
+          type: string
+          default: azureuser
+        vmAdminPassword:
+          title: VM Admin Password
+          type: string
+          ui:widget: password
+          description: Demo only. Consider using Key Vault + External Secrets for production.
+
+  steps:
+    - id: generate-storage
+      name: Generate Storage Account Manifests
+      if: ${{ parameters.serviceType == 'storage-account' }}
+      action: fetch:template
+      input:
+        url: ./content/storage-account
+        targetPath: ./out
+        values:
+          requestName: ${{ parameters.requestName }}
+          resourceGroupName: ${{ parameters.resourceGroupName }}
+          location: ${{ parameters.location }}
+          kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
+          storageAccountName: ${{ parameters.storageAccountName }}
+          storageSku: ${{ parameters.storageSku }}
+
+    - id: generate-vm
+      name: Generate VM Manifests
+      if: ${{ parameters.serviceType == 'virtual-machine' }}
+      action: fetch:template
+      input:
+        url: ./content/virtual-machine
+        targetPath: ./out
+        values:
+          requestName: ${{ parameters.requestName }}
+          resourceGroupName: ${{ parameters.resourceGroupName }}
+          location: ${{ parameters.location }}
+          kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
+          vmName: ${{ parameters.vmName }}
+          vmSize: ${{ parameters.vmSize }}
+          vmAdminUsername: ${{ parameters.vmAdminUsername }}
+          vmAdminPassword: ${{ parameters.vmAdminPassword }}
+
+    - id: create-pr
+      name: Create Pull Request
+      action: publish:github:pull-request
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        branchName: backstage-demo-${{ parameters.requestName }}
+        title: "feat(infra): add ${{ parameters.serviceType }} request '${{ parameters.requestName }}'"
+        description: |
+          Backstage-generated demo service request.
+
+          - Service type: `${{ parameters.serviceType }}`
+          - Request name: `${{ parameters.requestName }}`
+          - Azure location: `${{ parameters.location }}`
+          - Resource group: `${{ parameters.resourceGroupName }}`
+        sourcePath: ./out
+        targetPath: gitops/apps/infra/demo-services/instances/${{ parameters.requestName }}
+        token: ${{ secrets.USER_OAUTH_TOKEN }}
+        update: true
+        commitMessage: "feat(infra): add demo service request ${{ parameters.requestName }}"
+
+  output:
+    links:
+      - title: Pull Request
+        url: ${{ steps['create-pr'].output.remoteUrl }}
