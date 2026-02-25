@@ -123,14 +123,10 @@ spec:
                 vmAdminPassword:
                   title: VM Admin Password
                   type: string
-                  ui:widget: password
+                  ui:field: Secret
                   minLength: 6
                   maxLength: 72
-                  allOf:
-                    - pattern: '.*[a-z].*'
-                    - pattern: '.*[A-Z].*'
-                    - pattern: '.*[0-9].*'
-                    - pattern: '.*[^A-Za-z0-9].*'
+                  pattern: '^.{6,72}$'
                   description: Demo only. Consider using Key Vault + External Secrets for production.
                   ui:help: 6-72 chars, include uppercase, lowercase, number, and special character.
               required:
