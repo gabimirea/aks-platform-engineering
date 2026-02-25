@@ -1,10 +1,13 @@
-apiVersion: apimanagement.azure.com/v1api20220801
-kind: ProductApi
+apiVersion: apimanagement.azure.upbound.io/v1beta1
+kind: ProductAPI
 metadata:
   name: aks-store-product-api
   namespace: default
 spec:
-  owner:
-    name: aks-store-product
-  # Must match the API identifier (azureName) being attached to this product.
-  azureName: aks-store-api
+  forProvider:
+    apiManagementName: apim-service
+    apiName: aks-store-api
+    productId: aks-store-product
+    resourceGroupName: apim-rg
+  providerConfigRef:
+    name: default

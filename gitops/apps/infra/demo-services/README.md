@@ -6,10 +6,14 @@ Each request should be created in a dedicated subfolder under:
 
 - `gitops/apps/infra/demo-services/instances/<request-name>/`
 
+Crossplane manifests in this folder assume Azure `ProviderConfig` named `default`
+(or the name selected in the Backstage form).
+
 Backstage template added in this repository will create pull requests with either:
 
 - an Azure Storage Account request, or
-- an Azure Virtual Machine request (with required network resources).
+- an Azure Virtual Machine request (with required network resources),
+  implemented as Crossplane Azure resources.
 
 ## Deletion strategy (same GitOps flow)
 
@@ -21,5 +25,5 @@ Deletion follows the same strategy as creation:
 3. Merge the pull request.
 
 Argo CD will detect removed manifests and prune resources.
-Because the ASO resources are modeled in the same request folder and linked by owner references,
-the Storage Account or VM stack is deleted through reconciliation (no manual `kubectl delete` required).
+Crossplane reconciles deletion of the Azure resources represented by those manifests
+(no manual `kubectl delete` required).

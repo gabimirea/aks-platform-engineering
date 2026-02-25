@@ -1,0 +1,19 @@
+apiVersion: network.azure.upbound.io/v1beta1
+kind: NetworkInterfaceSecurityGroupAssociation
+metadata:
+  name: ${{ values.vmName }}-nic-nsg-assoc
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+spec:
+  forProvider:
+    networkInterfaceIdSelector:
+      matchLabels:
+        platform.demo/request: ${{ values.requestName }}
+        platform.demo/component: ${{ values.vmName }}-nic
+    networkSecurityGroupIdSelector:
+      matchLabels:
+        platform.demo/request: ${{ values.requestName }}
+        platform.demo/component: ${{ values.vmName }}-nsg
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}

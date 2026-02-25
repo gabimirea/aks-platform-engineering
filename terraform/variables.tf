@@ -44,7 +44,7 @@ variable "create_role_assignments_for_application_gateway" {
 variable "infrastructure_provider" {
   description = "Specific the choice of infrastructure provider. crossplane or capz"
   type        = string
-  default     = "capz"
+  default     = "crossplane"
 }
 
 variable "addons" {

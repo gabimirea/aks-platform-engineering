@@ -1,11 +1,16 @@
-apiVersion: network.azure.com/v1api20201101
-kind: VirtualNetworksSubnet
+apiVersion: network.azure.upbound.io/v1beta1
+kind: Subnet
 metadata:
   name: ${{ values.vmName }}-subnet
   namespace: ${{ values.kubernetesNamespace }}
   labels:
     platform.demo/request: ${{ values.requestName }}
+    platform.demo/component: ${{ values.vmName }}-subnet
 spec:
-  owner:
-    name: ${{ values.vmName }}-vnet
-  addressPrefix: 10.20.1.0/24
+  forProvider:
+    addressPrefixes:
+      - 10.20.1.0/24
+    resourceGroupName: ${{ values.resourceGroupName }}
+    virtualNetworkName: ${{ values.vmName }}-vnet
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}

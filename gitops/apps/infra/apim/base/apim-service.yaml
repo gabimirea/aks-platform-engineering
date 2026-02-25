@@ -1,17 +1,19 @@
-apiVersion: apimanagement.azure.com/v1api20220801
-kind: Service
+apiVersion: apimanagement.azure.upbound.io/v1beta1
+kind: Management
 metadata:
   name: apim-service
   namespace: default
+  labels:
+    platform.demo/component: apim-management
 spec:
-  owner:
-    name: apim-rg
-  location: swedencentral
-  publisherEmail: platform-team@example.com
-  publisherName: Platform Team
-  sku:
-    name: Developer
-    capacity: 1
-  tags:
-    managed-by: gitops
-    workload: apim
+  forProvider:
+    location: swedencentral
+    publisherEmail: platform-team@example.com
+    publisherName: Platform Team
+    resourceGroupName: apim-rg
+    skuName: Developer_1
+    tags:
+      managed-by: gitops
+      workload: apim
+  providerConfigRef:
+    name: default

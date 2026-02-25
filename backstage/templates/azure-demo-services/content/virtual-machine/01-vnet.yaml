@@ -1,4 +1,4 @@
-apiVersion: network.azure.com/v1api20201101
+apiVersion: network.azure.upbound.io/v1beta1
 kind: VirtualNetwork
 metadata:
   name: ${{ values.vmName }}-vnet
@@ -6,9 +6,12 @@ metadata:
   labels:
     platform.demo/request: ${{ values.requestName }}
 spec:
-  location: ${{ values.location }}
-  owner:
-    name: ${{ values.resourceGroupName }}
-  addressSpace:
-    addressPrefixes:
+  forProvider:
+    addressSpace:
       - 10.20.0.0/16
+    location: ${{ values.location }}
+    resourceGroupName: ${{ values.resourceGroupName }}
+    tags:
+      COST: ${{ values.costTag }}
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}

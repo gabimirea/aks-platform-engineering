@@ -1,19 +1,22 @@
-apiVersion: network.azure.com/v1api20201101
-kind: NetworkSecurityGroupsSecurityRule
+apiVersion: network.azure.upbound.io/v1beta1
+kind: SecurityRule
 metadata:
   name: ${{ values.vmName }}-nsg-allow-ssh
   namespace: ${{ values.kubernetesNamespace }}
   labels:
     platform.demo/request: ${{ values.requestName }}
 spec:
-  owner:
-    name: ${{ values.vmName }}-nsg
-  protocol: Tcp
-  sourcePortRange: "*"
-  destinationPortRange: "22"
-  sourceAddressPrefix: "*"
-  destinationAddressPrefix: "*"
-  access: Allow
-  priority: 101
-  direction: Inbound
-  description: Allow SSH from any source (demo only).
+  forProvider:
+    access: Allow
+    description: Allow SSH from any source (demo only).
+    destinationAddressPrefix: "*"
+    destinationPortRange: "22"
+    direction: Inbound
+    networkSecurityGroupName: ${{ values.vmName }}-nsg
+    priority: 101
+    protocol: Tcp
+    resourceGroupName: ${{ values.resourceGroupName }}
+    sourceAddressPrefix: "*"
+    sourcePortRange: "*"
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}

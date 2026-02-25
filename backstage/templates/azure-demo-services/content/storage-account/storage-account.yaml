@@ -1,15 +1,19 @@
-apiVersion: storage.azure.com/v1api20230101
-kind: StorageAccount
+apiVersion: storage.azure.upbound.io/v1beta1
+kind: Account
 metadata:
-  name: ${{ values.storageAccountName }}
+  name: ${{ values.requestName }}-sa
   namespace: ${{ values.kubernetesNamespace }}
   labels:
     platform.demo/request: ${{ values.requestName }}
+  annotations:
+    crossplane.io/external-name: ${{ values.storageAccountName }}
 spec:
-  location: ${{ values.location }}
-  owner:
-    name: ${{ values.resourceGroupName }}
-  kind: StorageV2
-  accessTier: Hot
-  sku:
-    name: ${{ values.storageSku }}
+  forProvider:
+    accountReplicationType: ${{ values.storageReplicationType }}
+    accountTier: ${{ values.storageAccountTier }}
+    location: ${{ values.location }}
+    resourceGroupName: ${{ values.resourceGroupName }}
+    tags:
+      COST: ${{ values.costTag }}
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}

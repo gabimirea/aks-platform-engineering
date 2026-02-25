@@ -1,17 +1,17 @@
 # APIM + AKS Store (GitOps)
 
-This folder provisions Azure API Management (APIM) using Azure Service Operator (ASO) and publishes an AKS Store endpoint through APIM with subscription-key access.
+This folder provisions Azure API Management (APIM) using Crossplane (Upbound Azure provider) and publishes an AKS Store endpoint through APIM with subscription-key access.
 
 ## What this deploys
 
 From `gitops/apps/infra/apim/base`:
 
 - Azure Resource Group (`ResourceGroup`)
-- APIM instance (`Service`)
+- APIM instance (`Management`)
 - APIM service policy (`Policy`) with backend forward-request
-- APIM API (`Api`) at path `/aksstore`
+- APIM API (`API`) at path `/aksstore`
 - APIM Product (`Product`) with `subscriptionRequired: true`
-- API to Product association (`ProductApi`)
+- API to Product association (`ProductAPI`)
 
 Overlay `gitops/apps/infra/apim/overlays/dev` patches:
 
@@ -20,8 +20,8 @@ Overlay `gitops/apps/infra/apim/overlays/dev` patches:
 
 ## Prerequisites
 
-- A running cluster with ASO installed and APIM/resource CRDs enabled.
-- `kubectl` context pointing to the control-plane cluster where ASO runs.
+- A running cluster with Crossplane + Azure provider installed and APIM/resource CRDs enabled.
+- `kubectl` context pointing to the control-plane cluster where Crossplane runs.
 - Argo CD installed (for GitOps install path).
 - AKS Store deployed to workload cluster (`aks1`) from:
   - `gitops/apps/myapp/AKSStoreDemoArgoApp.yaml`
@@ -32,11 +32,11 @@ Overlay `gitops/apps/infra/apim/overlays/dev` patches:
 Update these placeholders:
 
 1. APIM Azure resource name in `gitops/apps/infra/apim/overlays/dev/patch-apim-service.yaml`
-   - `spec.azureName: apim-dev-change-me-001`
+   - `metadata.annotations.crossplane.io/external-name: apim-dev-change-me-001`
 2. APIM publisher details in `gitops/apps/infra/apim/overlays/dev/patch-apim-service.yaml`
-   - `publisherEmail`, `publisherName`
+   - `spec.forProvider.publisherEmail`, `spec.forProvider.publisherName`
 3. Backend URL in `gitops/apps/infra/apim/overlays/dev/patch-apim-api-aks-store.yaml`
-   - `spec.serviceUrl: http://<AKS_STORE_LB_IP_OR_DNS>`
+   - `spec.forProvider.serviceUrl: http://<AKS_STORE_LB_IP_OR_DNS>`
 
 Get AKS Store URL:
 
@@ -74,21 +74,21 @@ kubectl apply -k gitops/apps/infra/apim/overlays/dev
 
 APIM provisioning can take a while (often 20-60+ minutes).
 
-Check ASO resources:
+Check Crossplane resources:
 
 ```bash
-kubectl get resourcegroups.resources.azure.com -n default
-kubectl get services.apimanagement.azure.com -n default
-kubectl get apis.apimanagement.azure.com -n default
-kubectl get products.apimanagement.azure.com -n default
-kubectl get productapis.apimanagement.azure.com -n default
+kubectl get resourcegroups.azure.upbound.io -n default
+kubectl get managements.apimanagement.azure.upbound.io -n default
+kubectl get apis.apimanagement.azure.upbound.io -n default
+kubectl get products.apimanagement.azure.upbound.io -n default
+kubectl get productapis.apimanagement.azure.upbound.io -n default
 ```
 
 Inspect conditions:
 
 ```bash
-kubectl describe services.apimanagement.azure.com apim-service -n default
-kubectl describe apis.apimanagement.azure.com aks-store-api -n default
+kubectl describe managements.apimanagement.azure.upbound.io apim-service -n default
+kubectl describe apis.apimanagement.azure.upbound.io aks-store-api -n default
 ```
 
 ## 4) Test through APIM (subscription key)
@@ -96,7 +96,7 @@ kubectl describe apis.apimanagement.azure.com aks-store-api -n default
 The API is configured with `subscriptionRequired: true`. You need a key from APIM.
 
 1. In Azure Portal:
-   - Open APIM instance (`azureName` from `patch-apim-service.yaml`)
+  - Open APIM instance (`crossplane.io/external-name` from `patch-apim-service.yaml`)
    - Go to `Products` -> `AKS Store Product`
    - Create/get a subscription and copy the primary key
 2. Call APIM gateway:
@@ -156,11 +156,11 @@ kubectl delete -k gitops/apps/infra/apim/overlays/dev
 ## 6) Post-uninstall checks
 
 ```bash
-kubectl get services.apimanagement.azure.com -n default
-kubectl get apis.apimanagement.azure.com -n default
-kubectl get products.apimanagement.azure.com -n default
-kubectl get productapis.apimanagement.azure.com -n default
-kubectl get resourcegroups.resources.azure.com -n default
+kubectl get managements.apimanagement.azure.upbound.io -n default
+kubectl get apis.apimanagement.azure.upbound.io -n default
+kubectl get products.apimanagement.azure.upbound.io -n default
+kubectl get productapis.apimanagement.azure.upbound.io -n default
+kubectl get resourcegroups.azure.upbound.io -n default
 ```
 
 Azure-side delete of APIM can also take significant time; resources may remain in deleting state for a while.
@@ -169,7 +169,7 @@ Azure-side delete of APIM can also take significant time; resources may remain i
 
 - APIM returns `200` with empty body:
   - Verify service policy exists and includes `<forward-request />` in backend.
-  - Check `Policy` resource: `kubectl get policy.apimanagement.azure.com -n default`
+  - Check `Policy` resource: `kubectl get policies.apimanagement.azure.upbound.io -n default`
 - `Api` is not ready:
   - Verify `spec.serviceUrl` points to a reachable AKS Store endpoint.
   - Confirm AKS Store service has external IP and responds directly.

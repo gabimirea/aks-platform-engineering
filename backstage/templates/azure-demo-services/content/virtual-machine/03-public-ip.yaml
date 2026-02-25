@@ -1,14 +1,18 @@
-apiVersion: network.azure.com/v1api20201101
-kind: PublicIPAddress
+apiVersion: network.azure.upbound.io/v1beta1
+kind: PublicIP
 metadata:
   name: ${{ values.vmName }}-pip
   namespace: ${{ values.kubernetesNamespace }}
   labels:
     platform.demo/request: ${{ values.requestName }}
+    platform.demo/component: ${{ values.vmName }}-pip
 spec:
-  location: ${{ values.location }}
-  owner:
-    name: ${{ values.resourceGroupName }}
-  sku:
-    name: Standard
-  publicIPAllocationMethod: Static
+  forProvider:
+    allocationMethod: Static
+    location: ${{ values.location }}
+    resourceGroupName: ${{ values.resourceGroupName }}
+    sku: Standard
+    tags:
+      COST: ${{ values.costTag }}
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}

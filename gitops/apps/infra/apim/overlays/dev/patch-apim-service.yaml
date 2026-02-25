@@ -1,11 +1,13 @@
-apiVersion: apimanagement.azure.com/v1api20220801
-kind: Service
+apiVersion: apimanagement.azure.upbound.io/v1beta1
+kind: Management
 metadata:
   name: apim-service
   namespace: default
+  annotations:
+    crossplane.io/external-name: apim-dev-change-me-001
 spec:
-  azureName: apim-dev-change-me-001
-  publisherEmail: apim-owner@example.com
-  publisherName: APIM Dev Owner
-  tags:
-    environment: dev
+  forProvider:
+    publisherEmail: apim-owner@example.com
+    publisherName: APIM Dev Owner
+    tags:
+      environment: dev

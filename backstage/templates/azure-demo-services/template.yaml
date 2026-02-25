@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: azure-demo-services-pr-template
   title: Azure Demo Services (Storage Account or VM)
-  description: Create a GitOps pull request to provision one demo Azure service with ASO.
+  description: Create a GitOps pull request to provision one demo Azure service with Crossplane.
   tags:
     - azure
     - gitops
@@ -22,6 +22,7 @@ spec:
         - costTag
         - location
         - kubernetesNamespace
+        - providerConfigName
       properties:
         repoUrl:
           title: Target Repository
@@ -62,6 +63,11 @@ spec:
           title: Kubernetes Namespace
           type: string
           default: default
+        providerConfigName:
+          title: Crossplane ProviderConfig Name
+          type: string
+          default: default
+          description: ProviderConfig name for Azure Crossplane provider.
       dependencies:
         serviceType:
           oneOf:
@@ -79,16 +85,22 @@ spec:
                   type: string
                   pattern: '^[a-z0-9]{4,6}$'
                   ui:help: Add a 4-6 char random suffix, lowercase letters or numbers.
-                storageSku:
-                  title: Storage SKU
+                storageAccountTier:
+                  title: Storage Account Tier
                   type: string
                   enum:
-                    - Standard_LRS
-                    - Standard_GRS
-                    - Standard_RAGRS
-                    - Standard_ZRS
-                    - Premium_LRS
-                  default: Standard_LRS
+                    - Standard
+                    - Premium
+                  default: Standard
+                storageReplicationType:
+                  title: Storage Replication Type
+                  type: string
+                  enum:
+                    - LRS
+                    - GRS
+                    - RAGRS
+                    - ZRS
+                  default: LRS
               required:
                 - storageAccountBaseName
                 - storageRandomCode
@@ -133,8 +145,10 @@ spec:
           costTag: ${{ parameters.costTag }}
           location: ${{ parameters.location }}
           kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
+          providerConfigName: ${{ parameters.providerConfigName }}
           storageAccountName: ${{ parameters.storageAccountBaseName + parameters.storageRandomCode }}
-          storageSku: ${{ parameters.storageSku }}
+          storageAccountTier: ${{ parameters.storageAccountTier }}
+          storageReplicationType: ${{ parameters.storageReplicationType }}
 
     - id: generate-vm
       name: Generate Virtual Machine Manifests (If Selected)
@@ -149,6 +163,7 @@ spec:
           costTag: ${{ parameters.costTag }}
           location: ${{ parameters.location }}
           kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
+          providerConfigName: ${{ parameters.providerConfigName }}
           vmName: ${{ parameters.vmName }}
           vmSize: ${{ parameters.vmSize }}
           vmAdminUsername: ${{ parameters.vmAdminUsername }}

@@ -1,4 +1,4 @@
-apiVersion: resources.azure.com/v1api20200601
+apiVersion: azure.upbound.io/v1beta1
 kind: ResourceGroup
 metadata:
   name: ${{ values.resourceGroupName }}
@@ -6,6 +6,10 @@ metadata:
   labels:
     platform.demo/request: ${{ values.requestName }}
 spec:
-  location: ${{ values.location }}
-  tags:
-    COST: ${{ values.costTag }}
+  forProvider:
+    name: ${{ values.resourceGroupName }}
+    location: ${{ values.location }}
+    tags:
+      COST: ${{ values.costTag }}
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}

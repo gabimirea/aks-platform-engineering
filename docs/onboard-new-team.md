@@ -19,10 +19,13 @@ There is example code to create new AKS clusters using CAPZ and Crossplane in th
 
 We will add the application to sync and create the clusters below, but first modify the values for this code before doing the commit to git to create the team clusters:
 
-For crossplane only - update these files:
-  - cluster-claim.yaml in [base](./gitops/clusters/crossplane/clusters/my-app-cluster/base/cluster-claim.yaml) - - change line 31 adminGroupObjectIds value as the objectId of the user/group to be designated as the admin for the clusters.
-  - cluster-claim.yaml in [dev](./gitops/clusters/crossplane/clusters/my-app-cluster/dev/cluster-claim.yaml) - change line 13 adminUser value as the objectId of the user to be designated as the admin user for the cluster.
-  - cluster-claim.yaml in [stage](./gitops/clusters/crossplane/clusters/my-app-cluster/stage/cluster-claim.yaml) - change line 13 adminUser value as the objectId of the user to be designated as the admin user for the cluster.
+For Crossplane only, update these files first:
+  - [gitops/clusters/crossplane/aks0/cluster-claim.yaml](../gitops/clusters/crossplane/aks0/cluster-claim.yaml)
+    - replace `adminGroupObjectIds`
+    - replace `adminUser`
+  - [gitops/clusters/crossplane/aks1/cluster-claim.yaml](../gitops/clusters/crossplane/aks1/cluster-claim.yaml)
+    - replace `adminGroupObjectIds`
+    - replace `adminUser`
 
 Optional for CAPZ only:
 - In order to access the workload cluster with a personal SSH key when using the CAPZ control plane option, create an SSH key with the following command. For more information on creating and using SSH keys, follow [this link](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/create-ssh-keys-detailed).
@@ -49,6 +52,35 @@ To enable `aks1` later while keeping Argo ApplicationSet behavior, apply:
 ```bash
 kubectl apply -f ../gitops/clusters/capz/optional/aks1-argo-applicationset.yaml
 ```
+
+For Crossplane, the same pattern is available:
+
+- default sync path: `gitops/clusters/crossplane/core`
+- `core` includes `addons` + `aks0` by default
+- `aks1` is commented in `gitops/clusters/crossplane/core/kustomization.yaml`
+
+Enable `aks1` with either method:
+
+```bash
+# Method A: uncomment in core kustomization
+# gitops/clusters/crossplane/core/kustomization.yaml
+# - ../aks1
+
+# Method B: optional ApplicationSet
+kubectl apply -f ../gitops/clusters/crossplane/optional/aks1-argo-applicationset.yaml
+```
+
+Crossplane can also be deployed independently:
+
+```bash
+kubectl apply -k ../gitops/clusters/crossplane/aks0
+kubectl apply -k ../gitops/clusters/crossplane/aks1
+```
+
+Optional Argo Applications also exist in infra folder (comment/uncomment in `gitops/apps/infra/kustomization.yaml`):
+
+- `CROSSPLANE-AKS0-ArgoApp.yaml`
+- `CROSSPLANE-AKS1-ArgoApp.yaml`
 
 For CAPZ, you can also deploy clusters independently:
 

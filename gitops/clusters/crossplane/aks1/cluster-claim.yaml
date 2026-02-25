@@ -1,13 +1,15 @@
 apiVersion: kubernetes.example.com/v1alpha1
 kind: AksClusterClaim
 metadata:
-  name: my-app-cluster
+  name: aks1
   annotations:
-    crossplane.io/external-name: my-app-cluster
+    crossplane.io/external-name: aks1
     argocd.argoproj.io/sync-wave: "3"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  location: "North Europe"
+  writeConnectionSecretToRef:
+    name: aks1-secret
+  location: "swedencentral"
   aks:
     defaultNodePool:
       name: system
@@ -28,11 +30,11 @@ spec:
     privateClusterEnabled: false
     azureActiveDirectoryRoleBasedAccessControl:
       - adminGroupObjectIds:
-          - 4e4d0501-e693-4f3e-965b-5bec6c410c03
+          - "00000000-0000-0000-0000-000000000000" # replace with admin Entra group/user Object ID
         azureRbacEnabled: true
         managed: true
     azurePolicyEnabled: true
-    networkProfile:    
+    networkProfile:
       - networkPlugin: azure
         networkPolicy: azure
         outboundType: loadBalancer
@@ -41,8 +43,9 @@ spec:
     workloadAutoscalerProfile:
       - kedaEnabled: true
         verticalPodAutoscalerEnabled: true
+    adminUser: "00000000-0000-0000-0000-000000000000" # replace with admin user Object ID
     tags:
-      environment: Test
+      environment: db
       provisionedBy: Crossplane
   userNodePool:
     name: user
@@ -63,10 +66,10 @@ spec:
     privateEndpointNetworkPoliciesEnabled: true
     privateLinkServiceNetworkPoliciesEnabled: false
     addressPrefixes:
-      - 10.0.0.0/16
+      - 10.1.0.0/16
   virtualNetwork:
     addressSpace:
-      - 10.0.0.0/8
+      - 10.1.0.0/8
     tags:
-      environment: Test
-      provisionedBy: Crossplane   
+      environment: db
+      provisionedBy: Crossplane

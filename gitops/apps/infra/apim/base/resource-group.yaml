@@ -1,7 +1,11 @@
-apiVersion: resources.azure.com/v1api20200601
+apiVersion: azure.upbound.io/v1beta1
 kind: ResourceGroup
 metadata:
   name: apim-rg
   namespace: default
 spec:
-  location: swedencentral
+  forProvider:
+    name: apim-rg
+    location: swedencentral
+  providerConfigRef:
+    name: default

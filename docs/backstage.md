@@ -43,7 +43,7 @@ Delete is handled with the same GitOps strategy:
 1. Open PR
 2. Remove `gitops/apps/infra/demo-services/instances/<request-name>/`
 3. Merge PR
-4. Argo CD prunes removed manifests and ASO reconciles deletion in Azure
+4. Argo CD prunes removed manifests and Crossplane reconciles deletion in Azure
 
 
 

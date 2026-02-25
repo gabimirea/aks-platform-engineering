@@ -39,7 +39,7 @@ This sample leverages the [GitOps Bridge Pattern](https://github.com/gitops-brid
 
 The control plane cluster will be configured with addons via ArgoCD using Terraform and then bootstrapped with tools needed for Day Two operations.  
 
-Choose Crossplane **or** Cluster API provider for Azure (CAPZ) to support deploying and managing clusters and Azure infrastructure for the application teams by changing the Terraform `infrastructure_provider` variable to either `crossplane` or `capz`.  [See this document](./docs/capz-or-crossplane.md) for further information on the comparison.  The default is `capz` if no value is specified. The Azure Service Operator (ASO) install which is a part of the CAPZ installation can be optionally customized with additional CRDs by editing the provided [values.yaml file](./gitops/environments/default/addons/cluster-api-provider-azure/values.yaml) and pushing updates to your repository.
+Choose Crossplane **or** Cluster API provider for Azure (CAPZ) to support deploying and managing clusters and Azure infrastructure for the application teams by changing the Terraform `infrastructure_provider` variable to either `crossplane` or `capz`.  [See this document](./docs/capz-or-crossplane.md) for further information on the comparison.  The default is `crossplane` if no value is specified.
 
 ## Prerequisites
 
@@ -74,12 +74,13 @@ Choose the `infrastructure_provider` variable to be `capz` (default) or `crosspl
 Alternatively, consider changing the example `tvars` file to match your desired configuration versus using the `-var` switches below.
 
 ```bash
-# For capz control plane
-terraform apply -var gitops_addons_org=https://github.com/gabimirea --auto-approve
-
 # For crossplane control plane
 terraform apply -var gitops_addons_org=https://github.com/azure-samples \
                 -var infrastructure_provider=crossplane --auto-approve
+
+# For capz control plane
+terraform apply -var gitops_addons_org=https://github.com/gabimirea \
+                -var infrastructure_provider=capz --auto-approve
 ```
 
 > Note: You can ignore the warnings related to deprecated attributes and invalid kubeconfig path.
@@ -138,28 +139,29 @@ Provisioning strategy:
 - Developers submit requests from Backstage.
 - Backstage creates a pull request with manifests in this repository.
 - Argo CD reconciles merged manifests.
-- ASO provisions resources in Azure.
+- Crossplane provisions resources in Azure.
 
 Deletion strategy (same model as create):
 
 - Remove the same request folder via pull request.
 - Merge the pull request.
-- Argo CD prunes resources and ASO reconciles delete in Azure.
+- Argo CD prunes resources and Crossplane reconciles delete in Azure.
 
 ### Files Added
 
 - `backstage/templates/azure-demo-services/template.yaml`: Backstage software template to choose `storage-account` or `virtual-machine` and create a PR to this repo.
-- `backstage/templates/azure-demo-services/content/storage-account/resource-group.yaml`: ASO `ResourceGroup` manifest template for storage requests.
-- `backstage/templates/azure-demo-services/content/storage-account/storage-account.yaml`: ASO `StorageAccount` manifest template.
-- `backstage/templates/azure-demo-services/content/virtual-machine/00-resource-group.yaml`: ASO `ResourceGroup` manifest template for VM requests.
-- `backstage/templates/azure-demo-services/content/virtual-machine/01-vnet.yaml`: ASO `VirtualNetwork` template.
-- `backstage/templates/azure-demo-services/content/virtual-machine/02-subnet.yaml`: ASO `VirtualNetworksSubnet` template.
-- `backstage/templates/azure-demo-services/content/virtual-machine/03-public-ip.yaml`: ASO `PublicIPAddress` template.
-- `backstage/templates/azure-demo-services/content/virtual-machine/04-nsg.yaml`: ASO `NetworkSecurityGroup` template.
-- `backstage/templates/azure-demo-services/content/virtual-machine/05-nsg-rule-ssh.yaml`: ASO SSH inbound rule template for demo access.
-- `backstage/templates/azure-demo-services/content/virtual-machine/06-nic.yaml`: ASO `NetworkInterface` template wired to subnet, NSG, and public IP.
+- `backstage/templates/azure-demo-services/content/storage-account/resource-group.yaml`: Crossplane `ResourceGroup` manifest template for storage requests.
+- `backstage/templates/azure-demo-services/content/storage-account/storage-account.yaml`: Crossplane `storage Account` manifest template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/00-resource-group.yaml`: Crossplane `ResourceGroup` manifest template for VM requests.
+- `backstage/templates/azure-demo-services/content/virtual-machine/01-vnet.yaml`: Crossplane `VirtualNetwork` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/02-subnet.yaml`: Crossplane `Subnet` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/03-public-ip.yaml`: Crossplane `PublicIP` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/04-nsg.yaml`: Crossplane `SecurityGroup` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/05-nsg-rule-ssh.yaml`: Crossplane SSH inbound `SecurityRule` template for demo access.
+- `backstage/templates/azure-demo-services/content/virtual-machine/06-nic.yaml`: Crossplane `NetworkInterface` template wired to subnet and public IP.
+- `backstage/templates/azure-demo-services/content/virtual-machine/06b-nic-nsg-association.yaml`: Crossplane `NetworkInterfaceSecurityGroupAssociation` template.
 - `backstage/templates/azure-demo-services/content/virtual-machine/07-vm-admin-secret.yaml`: Kubernetes secret template for VM admin password (demo usage).
-- `backstage/templates/azure-demo-services/content/virtual-machine/08-vm.yaml`: ASO `VirtualMachine` template.
+- `backstage/templates/azure-demo-services/content/virtual-machine/08-vm.yaml`: Crossplane `LinuxVirtualMachine` template.
 - `gitops/apps/infra/DEMO-SERVICES-ArgoApp.yaml`: Argo CD application that syncs all demo service request folders.
 - `gitops/apps/infra/demo-services/README.md`: Lifecycle and delete behavior documentation for demo services.
 - `gitops/apps/infra/demo-services/instances/.gitkeep`: Placeholder to keep the instances folder in git.
@@ -170,8 +172,6 @@ Deletion strategy (same model as create):
 - `backstage/app-config.production.yaml`: Registered production template location for `azure-demo-services`.
 - `gitops/bootstrap/control-plane/addons/backstage/app.yaml`: Added catalog template location for the new portal template in deployed Backstage.
 - `gitops/apps/infra/kustomization.yaml`: Included `DEMO-SERVICES-ArgoApp.yaml` in infra app-of-apps.
-- `gitops/environments/default/addons/cluster-api-provider-azure/values.yaml`: Extended ASO CRD pattern with `storage.azure.com/*`, `network.azure.com/*`, and `compute.azure.com/*`.
-- `gitops/environments/default/addons/cluster-api-operator/values.yaml`: Extended ASO CRD pattern with `storage.azure.com/*`, `network.azure.com/*`, and `compute.azure.com/*`.
 - `docs/backstage.md`: Added documentation for the new VM/storage demo template and GitOps deletion flow.
 
 ### Request Folder Contract
@@ -184,3 +184,104 @@ Each request folder is the unit of lifecycle:
 
 - Create by adding the folder.
 - Delete by removing the folder.
+
+## 3. Full Install Order (From Scratch)
+
+Use this order for a clean setup with Crossplane-first defaults in this repository.
+
+### 1) Create management cluster `gitops-aks` + platform add-ons
+
+```powershell
+cd terraform
+terraform init -upgrade
+terraform apply -var gitops_addons_org=https://github.com/gabimirea --auto-approve
+```
+
+Notes:
+- Default infrastructure provider is `crossplane`.
+- If you need CAPZ explicitly, add `-var infrastructure_provider=capz`.
+
+### 2) Install infra app-of-apps (`apps-deployment` + `apps-of-apps-deployment`)
+
+```powershell
+cd ..\gitops\bootstrap\control-plane
+kubectl apply -f .\apps-of-apps-deployment.yaml
+kubectl apply -f ..\..\apps\infra\apps-deployment.yaml
+```
+
+Validate:
+
+```powershell
+kubectl -n argocd get applications
+```
+
+### 3) Install Backstage / Portal
+
+Backstage is managed from:
+- `gitops/bootstrap/control-plane/addons/backstage/app.yaml`
+
+If not already enabled by your current Argo sync selection, apply/update and sync:
+
+```powershell
+kubectl apply -f .\addons\backstage\app.yaml
+kubectl -n backstage get pods
+kubectl -n backstage get svc
+```
+
+If GitHub PR creation is required from templates, make sure token secret exists:
+
+```powershell
+$pat = Read-Host "Enter GitHub PAT" -MaskInput
+kubectl -n backstage create secret generic backstage-github `
+  --from-literal=token="$pat" `
+  --dry-run=client -o yaml | kubectl apply -f -
+Remove-Variable pat
+kubectl -n backstage rollout restart deploy/backstage
+```
+
+### 4) Enable workload clusters and infra apps (toggle by comment/uncomment)
+
+Crossplane cluster toggles:
+- `gitops/clusters/crossplane/core/kustomization.yaml`
+  - keep `../aks0` enabled for initial cluster
+  - uncomment `../aks1` when needed
+- optional separate enable:
+  - `gitops/clusters/crossplane/optional/aks1-argo-applicationset.yaml`
+
+Infra app toggles:
+- `gitops/apps/infra/kustomization.yaml`
+  - uncomment as needed:
+    - `APIM-ArgoApp.yaml`
+    - `CROSSPLANE-AKS0-ArgoApp.yaml`
+    - `CROSSPLANE-AKS1-ArgoApp.yaml`
+    - `DEMO-SERVICES-ArgoApp.yaml`
+
+Apply after toggles:
+
+```powershell
+cd C:\_git\Platform-Enginneering-Env\aks-platform-engineering
+kubectl apply -k .\gitops\clusters\crossplane
+kubectl apply -k .\gitops\apps\infra
+```
+
+### Quick verification checklist
+
+```powershell
+# 1) Argo CD core health
+kubectl -n argocd get applications
+
+# 2) Crossplane + Azure provider health
+kubectl -n crossplane-system get pods
+kubectl get providers.pkg.crossplane.io
+kubectl get providerconfigs.azure.upbound.io
+
+# 3) Backstage health
+kubectl -n backstage get pods
+kubectl -n backstage logs deploy/backstage --tail=100
+
+# 4) Demo templates visible in Backstage catalog
+# Open Backstage -> Create and confirm "Azure Demo Services (Storage Account or VM)" appears.
+
+# 5) Demo GitOps path exists
+Get-ChildItem .\gitops\apps\infra\demo-services\instances
+```

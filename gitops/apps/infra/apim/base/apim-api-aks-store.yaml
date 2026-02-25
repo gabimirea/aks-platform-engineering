@@ -1,38 +1,41 @@
-apiVersion: apimanagement.azure.com/v1api20220801
-kind: Api
+apiVersion: apimanagement.azure.upbound.io/v1beta1
+kind: API
 metadata:
   name: aks-store-api
   namespace: default
 spec:
-  owner:
-    name: apim-service
-  azureName: aks-store-api
-  displayName: AKS Store API
-  apiType: http
-  path: aksstore
-  protocols:
-    - https
-  serviceUrl: http://replace-with-aks-store-lb-ip-or-dns
-  subscriptionRequired: true
-  format: openapi
-  value: |
-    openapi: 3.0.1
-    info:
-      title: AKS Store API
-      version: "1.0.0"
-      description: Minimal API surface for routing AKS Store traffic through APIM
-    paths:
-      /:
-        get:
-          operationId: getStoreFrontRoot
-          summary: Get store front root page
-          responses:
-            "200":
-              description: OK
-      /health:
-        get:
-          operationId: getHealth
-          summary: APIM health probe endpoint
-          responses:
-            "200":
-              description: OK
+  forProvider:
+    apiManagementName: apim-service
+    displayName: AKS Store API
+    import:
+      contentFormat: openapi
+      contentValue: |
+        openapi: 3.0.1
+        info:
+          title: AKS Store API
+          version: "1.0.0"
+          description: Minimal API surface for routing AKS Store traffic through APIM
+        paths:
+          /:
+            get:
+              operationId: getStoreFrontRoot
+              summary: Get store front root page
+              responses:
+                "200":
+                  description: OK
+          /health:
+            get:
+              operationId: getHealth
+              summary: APIM health probe endpoint
+              responses:
+                "200":
+                  description: OK
+    path: aksstore
+    protocols:
+      - https
+    resourceGroupName: apim-rg
+    revision: "1"
+    serviceUrl: http://replace-with-aks-store-lb-ip-or-dns
+    subscriptionRequired: true
+  providerConfigRef:
+    name: default

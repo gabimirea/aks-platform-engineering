@@ -1,9 +1,10 @@
-apiVersion: apimanagement.azure.com/v1api20220801
-kind: Api
+apiVersion: apimanagement.azure.upbound.io/v1beta1
+kind: API
 metadata:
   name: aks-store-api
   namespace: default
 spec:
   # Set this to the AKS Store LoadBalancer IP/DNS, for example:
   # http://20.1.2.3 or http://my-store.eastus.cloudapp.azure.com
-  serviceUrl: http://9.223.202.145
+  forProvider:
+    serviceUrl: http://9.223.202.145

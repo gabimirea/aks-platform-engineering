@@ -1,29 +1,25 @@
-apiVersion: network.azure.com/v1api20201101
+apiVersion: network.azure.upbound.io/v1beta1
 kind: NetworkInterface
 metadata:
   name: ${{ values.vmName }}-nic
   namespace: ${{ values.kubernetesNamespace }}
   labels:
     platform.demo/request: ${{ values.requestName }}
+    platform.demo/component: ${{ values.vmName }}-nic
 spec:
-  location: ${{ values.location }}
-  owner:
-    name: ${{ values.resourceGroupName }}
-  networkSecurityGroup:
-    reference:
-      group: network.azure.com
-      kind: NetworkSecurityGroup
-      name: ${{ values.vmName }}-nsg
-  ipConfigurations:
-    - name: ipconfig1
-      privateIPAllocationMethod: Dynamic
-      publicIPAddress:
-        reference:
-          group: network.azure.com
-          kind: PublicIPAddress
-          name: ${{ values.vmName }}-pip
-      subnet:
-        reference:
-          group: network.azure.com
-          kind: VirtualNetworksSubnet
-          name: ${{ values.vmName }}-subnet
+  forProvider:
+    ipConfiguration:
+      - name: ipconfig1
+        privateIpAddressAllocation: Dynamic
+        publicIpAddressIdSelector:
+          matchLabels:
+            platform.demo/request: ${{ values.requestName }}
+            platform.demo/component: ${{ values.vmName }}-pip
+        subnetIdSelector:
+          matchLabels:
+            platform.demo/request: ${{ values.requestName }}
+            platform.demo/component: ${{ values.vmName }}-subnet
+    location: ${{ values.location }}
+    resourceGroupName: ${{ values.resourceGroupName }}
+  providerConfigRef:
+    name: ${{ values.providerConfigName }}
