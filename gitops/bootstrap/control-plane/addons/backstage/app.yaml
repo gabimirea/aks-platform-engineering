@@ -29,11 +29,20 @@ spec:
               value: http://backstage.local:7007
             - name: NODE_OPTIONS
               value: --no-node-snapshot
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: backstage-github
+                  key: token
 
           appConfig:
             app:
               title: "Developer Portal"
               baseUrl: ${APP_BASE_URL:-http://localhost:7007}
+            integrations:
+              github:
+                - host: github.com
+                  token: ${GITHUB_TOKEN}
             auth:
               providers:
                 guest:
