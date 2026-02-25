@@ -7,7 +7,6 @@ metadata:
     platform.demo/request: create-vm
 spec:
   forProvider:
-    name: rg-vm-sdc-001
     location: swedencentral
     tags:
       COST: T3

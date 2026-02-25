@@ -7,7 +7,6 @@ metadata:
     platform.demo/request: ${{ values.requestName }}
 spec:
   forProvider:
-    name: ${{ values.resourceGroupName }}
     location: ${{ values.location }}
     tags:
       COST: ${{ values.costTag }}
