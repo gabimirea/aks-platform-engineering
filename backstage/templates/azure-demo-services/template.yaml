@@ -123,7 +123,7 @@ spec:
                 vmAdminPassword:
                   title: VM Admin Password
                   type: string
-                  ui:field: Secret
+                  ui:widget: password
                   minLength: 6
                   maxLength: 72
                   allOf:
