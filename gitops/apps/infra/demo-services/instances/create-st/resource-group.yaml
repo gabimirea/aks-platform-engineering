@@ -1,0 +1,11 @@
+apiVersion: resources.azure.com/v1api20200601
+kind: ResourceGroup
+metadata:
+  name: rg-vm-sdc-001
+  namespace: default
+  labels:
+    platform.demo/request: create-st
+spec:
+  location: swedencentral
+  tags:
+    COST: T3
