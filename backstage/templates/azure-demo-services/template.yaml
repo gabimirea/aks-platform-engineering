@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: azure-demo-services-pr-template
-  title: Azure Demo Services (VM or Storage)
+  title: Azure Demo Services (Storage Account or VM)
   description: Create a GitOps pull request to provision one demo Azure service with ASO.
   tags:
     - azure
@@ -104,7 +104,7 @@ spec:
                 vmAdminPassword:
                   title: VM Admin Password
                   type: string
-                  ui:widget: password
+                  ui:field: Secret
                   description: Demo only. Consider using Key Vault + External Secrets for production.
               required:
                 - vmName
@@ -112,7 +112,7 @@ spec:
 
   steps:
     - id: generate-storage
-      name: Generate Storage Account Manifests
+      name: Generate Storage Account Manifests (If Selected)
       if: ${{ parameters.serviceType == 'storage-account' }}
       action: fetch:template
       input:
@@ -127,7 +127,7 @@ spec:
           storageSku: ${{ parameters.storageSku }}
 
     - id: generate-vm
-      name: Generate VM Manifests
+      name: Generate Virtual Machine Manifests (If Selected)
       if: ${{ parameters.serviceType == 'virtual-machine' }}
       action: fetch:template
       input:

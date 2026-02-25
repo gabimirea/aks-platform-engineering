@@ -27,6 +27,8 @@ spec:
           extraEnvVars:
             - name: APP_BASE_URL
               value: http://backstage.local:7007
+            - name: NODE_OPTIONS
+              value: --no-node-snapshot
 
           appConfig:
             app:
