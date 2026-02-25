@@ -30,11 +30,6 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-            requestUserCredentials:
-              secretsKey: USER_OAUTH_TOKEN
-              additionalScopes:
-                github:
-                  - repo
         requestName:
           title: Request Name
           type: string
@@ -150,7 +145,6 @@ spec:
           - Resource group: `${{ parameters.resourceGroupName }}`
         sourcePath: ./out
         targetPath: gitops/apps/infra/demo-services/instances/${{ parameters.requestName }}
-        token: ${{ secrets.USER_OAUTH_TOKEN }}
         update: true
         commitMessage: "feat(infra): add demo service request ${{ parameters.requestName }}"
 
