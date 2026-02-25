@@ -66,7 +66,7 @@ With Crossplane:
 ```bash
 az aks get-credentials --resource-group aks1 --name aks1 --overwrite-existing
 kubelogin convert-kubeconfig -l azurecli
-argocd login 9.223.201.91 --username admin --password 9rvkRKbdzFUHt08T --insecure
+argocd login 135.116.39.4 --username admin --password 3ASXoTrC6yMxkA8Q --insecure
 argocd cluster add aks1
 argocd cluster list
 ```
