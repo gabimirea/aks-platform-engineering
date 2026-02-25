@@ -19,6 +19,7 @@ spec:
         - requestName
         - serviceType
         - resourceGroupName
+        - costTag
         - location
         - kubernetesNamespace
       properties:
@@ -47,6 +48,12 @@ spec:
           title: Azure Resource Group
           type: string
           pattern: '^[a-zA-Z0-9._()\\-]+$'
+        costTag:
+          title: COST Tag Value
+          type: string
+          default: T3
+          pattern: '^[a-zA-Z0-9._()\\-]+$'
+          description: Required by Azure Policy on resource groups.
         location:
           title: Azure Location
           type: string
@@ -121,6 +128,7 @@ spec:
         values:
           requestName: ${{ parameters.requestName }}
           resourceGroupName: ${{ parameters.resourceGroupName }}
+          costTag: ${{ parameters.costTag }}
           location: ${{ parameters.location }}
           kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
           storageAccountName: ${{ parameters.storageAccountBaseName + parameters.storageRandomCode }}
@@ -136,6 +144,7 @@ spec:
         values:
           requestName: ${{ parameters.requestName }}
           resourceGroupName: ${{ parameters.resourceGroupName }}
+          costTag: ${{ parameters.costTag }}
           location: ${{ parameters.location }}
           kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
           vmName: ${{ parameters.vmName }}

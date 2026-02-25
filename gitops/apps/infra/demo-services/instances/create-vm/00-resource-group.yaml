@@ -7,3 +7,5 @@ metadata:
     platform.demo/request: create-vm
 spec:
   location: swedencentral
+  tags:
+    COST: T3
