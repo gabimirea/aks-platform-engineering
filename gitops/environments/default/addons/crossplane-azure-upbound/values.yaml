@@ -9,6 +9,9 @@ provider:
     registry: xpkg.upbound.io/upbound
     version: v2.3.1
 
+providerConfig:
+  enabled: false
+
 providers:
   - containerservice
   - compute

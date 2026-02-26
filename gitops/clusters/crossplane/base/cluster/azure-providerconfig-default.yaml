@@ -1,0 +1,13 @@
+apiVersion: azure.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: default
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  credentials:
+    source: OIDCTokenFile
+  clientID: f2a5aba9-3874-480b-9cdb-7b6f4012e4b0
+  subscriptionID: 31abf20e-7c3d-49cd-8c25-ba5c09711d8d
+  tenantID: 6ad73702-409c-4046-ae59-cc4bea334507
