@@ -27,6 +27,11 @@ spec:
         apiVersion: containerservice.azure.upbound.io/v1beta2
         kind: KubernetesCluster
         spec:
+          managementPolicies:
+            - Observe
+            - Create
+            - Update
+            - Delete
           writeConnectionSecretToRef:
             name: example-kubeconfig
             namespace: crossplane-system
@@ -280,6 +285,8 @@ spec:
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.adminUser
           toFieldPath: spec.forProvider.principalId
+      readinessChecks:
+        - type: None
     - name: helm-provider-config
       base:
         apiVersion: helm.crossplane.io/v1beta1
@@ -322,7 +329,6 @@ spec:
             chart:
               name: argo-cd
               repository: https://argoproj.github.io/argo-helm
-              version:  '{{metadata.labels.argocd_chart_version}}'
             namespace: argocd
           providerConfigRef:
             name: helm-provider	
@@ -330,6 +336,8 @@ spec:
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.name
           toFieldPath: spec.providerConfigRef.name                 
+      readinessChecks:
+        - type: None
     - name: kubernetes-provider-config
       base:
         apiVersion: kubernetes.crossplane.io/v1alpha1
@@ -378,6 +386,8 @@ spec:
       patches:
         - fromFieldPath: metadata.name
           toFieldPath: spec.providerConfigRef.name 
+      readinessChecks:
+        - type: None
   compositeTypeRef:
     apiVersion: kubernetes.example.com/v1alpha1
     kind: XAksCluster
