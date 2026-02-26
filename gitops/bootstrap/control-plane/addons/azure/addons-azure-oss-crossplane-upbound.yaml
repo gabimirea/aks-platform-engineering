@@ -68,6 +68,11 @@ spec:
       destination:
         namespace: '{{values.addonChartNamespace}}'
         name: '{{name}}'
+      ignoreDifferences:
+        - group: pkg.crossplane.io
+          kind: Provider
+          jsonPointers:
+            - /spec/package
       syncPolicy:
         retry:
           limit: 100
@@ -75,3 +80,4 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true  # Big CRDs.
+          - RespectIgnoreDifferences=true
