@@ -9,5 +9,13 @@ provider:
     registry: xpkg.upbound.io/upbound
     version: v2.3.1
 
+providers:
+  - containerservice
+  - compute
+  - storage
+  - network
+  - resources
+  - authorization
+
 deploymentRuntimeConfig:
   enabled: true
