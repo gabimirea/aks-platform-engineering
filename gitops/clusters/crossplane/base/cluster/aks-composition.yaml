@@ -24,7 +24,7 @@ spec:
       connectionDetails:
         - fromConnectionSecretKey: kubeconfig  
       base:
-        apiVersion: containerservice.azure.upbound.io/v1beta1
+        apiVersion: containerservice.azure.upbound.io/v1beta2
         kind: KubernetesCluster
         spec:
           writeConnectionSecretToRef:
@@ -32,9 +32,9 @@ spec:
             namespace: crossplane-system
           forProvider:
             defaultNodePool:
-              - type: VirtualMachineScaleSets
-                vnetSubnetIdSelector:
-                  matchControllerRef: true
+              type: VirtualMachineScaleSets
+              vnetSubnetIdSelector:
+                matchControllerRef: true
             resourceGroupNameSelector:
               matchControllerRef: true
       patches:
@@ -66,46 +66,40 @@ spec:
               convert: "ToLower"
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.name
-          toFieldPath: spec.forProvider.defaultNodePool[0].name
+          toFieldPath: spec.forProvider.defaultNodePool.name
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.maxCount
-          toFieldPath: spec.forProvider.defaultNodePool[0].maxCount
+          toFieldPath: spec.forProvider.defaultNodePool.maxCount
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.minCount
-          toFieldPath: spec.forProvider.defaultNodePool[0].minCount
-        - type: FromCompositeFieldPath
-          fromFieldPath: spec.aks.defaultNodePool.nodeCount
-          toFieldPath: spec.forProvider.defaultNodePool[0].nodeCount
+          toFieldPath: spec.forProvider.defaultNodePool.minCount
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.vmSize
-          toFieldPath: spec.forProvider.defaultNodePool[0].vmSize
+          toFieldPath: spec.forProvider.defaultNodePool.vmSize
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.enableAutoScaling
-          toFieldPath: spec.forProvider.defaultNodePool[0].enableAutoScaling
+          toFieldPath: spec.forProvider.defaultNodePool.autoScalingEnabled
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.maxPods
-          toFieldPath: spec.forProvider.defaultNodePool[0].maxPods
+          toFieldPath: spec.forProvider.defaultNodePool.maxPods
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.nodeLabels
-          toFieldPath: spec.forProvider.defaultNodePool[0].nodeLabels
-        - type: FromCompositeFieldPath
-          fromFieldPath: spec.aks.defaultNodePool.nodeTaints
-          toFieldPath: spec.forProvider.defaultNodePool[0].nodeTaints
+          toFieldPath: spec.forProvider.defaultNodePool.nodeLabels
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.osDiskType
-          toFieldPath: spec.forProvider.defaultNodePool[0].osDiskType
+          toFieldPath: spec.forProvider.defaultNodePool.osDiskType
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.onlyCriticalAddonsEnabled
-          toFieldPath: spec.forProvider.defaultNodePool[0].onlyCriticalAddonsEnabled
+          toFieldPath: spec.forProvider.defaultNodePool.onlyCriticalAddonsEnabled
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.osSku
-          toFieldPath: spec.forProvider.defaultNodePool[0].osSku
+          toFieldPath: spec.forProvider.defaultNodePool.osSku
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.osDiskSizeGb
-          toFieldPath: spec.forProvider.defaultNodePool[0].osDiskSizeGb
+          toFieldPath: spec.forProvider.defaultNodePool.osDiskSizeGb
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.defaultNodePool.type
-          toFieldPath: spec.forProvider.defaultNodePool[0].type
+          toFieldPath: spec.forProvider.defaultNodePool.type
         - type: FromCompositeFieldPath
           fromFieldPath: spec.aks.kubernetesVersion
           toFieldPath: spec.forProvider.kubernetesVersion
@@ -153,7 +147,7 @@ spec:
           toFieldPath: status.atProvider.clusterId
     - name: user-node-pool
       base:
-        apiVersion: containerservice.azure.upbound.io/v1beta1
+        apiVersion: containerservice.azure.upbound.io/v1beta2
         kind: KubernetesClusterNodePool
         spec:
           forProvider:
@@ -174,14 +168,11 @@ spec:
           fromFieldPath: spec.userNodePool.minCount
           toFieldPath: spec.forProvider.minCount
         - type: FromCompositeFieldPath
-          fromFieldPath: spec.userNodePool.nodeCount
-          toFieldPath: spec.forProvider.nodeCount
-        - type: FromCompositeFieldPath
           fromFieldPath: spec.userNodePool.vmSize
           toFieldPath: spec.forProvider.vmSize
         - type: FromCompositeFieldPath
           fromFieldPath: spec.userNodePool.enableAutoScaling
-          toFieldPath: spec.forProvider.enableAutoScaling
+          toFieldPath: spec.forProvider.autoScalingEnabled
         - type: FromCompositeFieldPath
           fromFieldPath: spec.userNodePool.maxPods
           toFieldPath: spec.forProvider.maxPods

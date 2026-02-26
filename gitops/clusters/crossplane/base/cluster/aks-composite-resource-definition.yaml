@@ -105,88 +105,82 @@ spec:
                     description: specifies whether Azure Active Directory Role-Based Access Control is enabled
                     default: true
                   azureActiveDirectoryRoleBasedAccessControl:
-                    type: array
+                    type: object
                     description: specifies the Azure Active Directory Role-Based Access Control settings
-                    items:
-                      type: object
-                      properties:
-                        adminGroupObjectIds:
-                          type: array
-                          description: specifies the object IDs of the Azure Active Directory admin groups
-                          items:
-                            type: string
-                        azureRbacEnabled:
-                          type: boolean
-                          description: specifies whether Azure Active Directory Role-Based Access Control is enabled
-                        managed:
-                          type: boolean
-                          description: specifies whether the Azure Active Directory Role-Based Access Control is managed
+                    properties:
+                      adminGroupObjectIds:
+                        type: array
+                        description: specifies the object IDs of the Azure Active Directory admin groups
+                        items:
+                          type: string
+                      azureRbacEnabled:
+                        type: boolean
+                        description: specifies whether Azure Active Directory Role-Based Access Control is enabled
+                      managed:
+                        type: boolean
+                        description: specifies whether the Azure Active Directory Role-Based Access Control is managed
                   azurePolicyEnabled:
                     type: boolean
                   networkProfile:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        dnsServiceIp:
-                          type: string
-                          description: specifies the IP address of the Kubernetes DNS service
-                          default: 172.16.0.10
-                        serviceCidr:
-                          type: string
-                          description: specifies the IP address range for the services in the Kubernetes cluster
-                          default: 172.16.0.0/16
-                        networkMode:
-                          type: string
-                          description: specifies the network mode for the Kubernetes cluster
-                          enum:
-                            - transparent
-                            - bridge
-                        networkPlugin:
-                          type: string
-                          description: specifies the network plugin used for the Kubernetes cluster
-                          default: azure
-                          enum: 
-                            - azure
-                            - kubenet
-                            - none
-                        networkPluginMode:
-                          type: string
-                          description: specifies the network plugin mode for the Kubernetes cluster
-                        networkPolicy:
-                          type: string
-                          description: specifies the network policy for the Kubernetes cluster
-                          enum:
-                           - azure
-                           - calico
-                           - cilium
-                        outboundType:
-                          type: string
-                          description: specifies the outbound type for the Kubernetes cluster
-                          enum:
-                           - loadBalancer
-                           - managedNATGateway
-                           - userAssignedNATGateway
-                           - userDefinedRouting
+                    type: object
+                    properties:
+                      dnsServiceIp:
+                        type: string
+                        description: specifies the IP address of the Kubernetes DNS service
+                        default: 172.16.0.10
+                      serviceCidr:
+                        type: string
+                        description: specifies the IP address range for the services in the Kubernetes cluster
+                        default: 172.16.0.0/16
+                      networkMode:
+                        type: string
+                        description: specifies the network mode for the Kubernetes cluster
+                        enum:
+                          - transparent
+                          - bridge
+                      networkPlugin:
+                        type: string
+                        description: specifies the network plugin used for the Kubernetes cluster
+                        default: azure
+                        enum: 
+                          - azure
+                          - kubenet
+                          - none
+                      networkPluginMode:
+                        type: string
+                        description: specifies the network plugin mode for the Kubernetes cluster
+                      networkPolicy:
+                        type: string
+                        description: specifies the network policy for the Kubernetes cluster
+                        enum:
+                         - azure
+                         - calico
+                         - cilium
+                      outboundType:
+                        type: string
+                        description: specifies the outbound type for the Kubernetes cluster
+                        enum:
+                         - loadBalancer
+                         - managedNATGateway
+                         - userAssignedNATGateway
+                         - userDefinedRouting
                   identity:
-                    type: array
+                    type: object
                     description: specifies the identity settings for the Kubernetes cluster
-                    items:
-                      type: object
-                      properties:
-                        type:
+                    properties:
+                      type:
+                        type: string
+                        description: specifies the type of the identity
+                        enum:
+                          - SystemAssigned
+                          - UserAssigned
+                      identityIds:
+                        type: array
+                        description: specifies the user-assigned identities
+                        items:
                           type: string
-                          description: specifies the type of the identity
-                          enum:
-                            - SystemAssigned
-                            - UserAssigned
-                        identityIds:
-                          type: array
-                          description: specifies the user-assigned identities
-                          items:
-                            type: string
                     default:
-                      - type: SystemAssigned
+                      type: SystemAssigned
                   localAccountDisabled:
                     type: boolean
                     description: specifies whether the local account is disabled
@@ -203,16 +197,14 @@ spec:
                     type: boolean
                     description: specifies whether the private cluster public FQDN is enabled
                   workloadAutoscalerProfile:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        kedaEnabled:
-                          type: boolean
-                          description: specifies whether the Kubernetes Event-Driven Autoscaler is enabled
-                        verticalPodAutoscalerEnabled:
-                          type: boolean
-                          description: specifies whether the Vertical Pod Autoscaler is enabled
+                    type: object
+                    properties:
+                      kedaEnabled:
+                        type: boolean
+                        description: specifies whether the Kubernetes Event-Driven Autoscaler is enabled
+                      verticalPodAutoscalerEnabled:
+                        type: boolean
+                        description: specifies whether the Vertical Pod Autoscaler is enabled
                   tags:
                     type: object
                     description: specifies the tags for the Kubernetes cluster
@@ -339,7 +331,9 @@ spec:
                 properties:
                   tags:
                     type: object
-                    description: specifies the tags for the virtual network                  
+                    description: specifies the tags for the resource group
+                    additionalProperties:
+                      type: string
             required:
               - location
           status:

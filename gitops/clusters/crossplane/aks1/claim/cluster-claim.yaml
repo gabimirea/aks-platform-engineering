@@ -29,20 +29,20 @@ spec:
     workloadIdentityEnabled: true
     privateClusterEnabled: false
     azureActiveDirectoryRoleBasedAccessControl:
-      - adminGroupObjectIds:
-          - "00000000-0000-0000-0000-000000000000" # replace with admin Entra group/user Object ID
-        azureRbacEnabled: true
-        managed: true
+      adminGroupObjectIds:
+        - "00000000-0000-0000-0000-000000000000" # replace with admin Entra group/user Object ID
+      azureRbacEnabled: true
+      managed: true
     azurePolicyEnabled: true
     networkProfile:
-      - networkPlugin: azure
-        networkPolicy: azure
-        outboundType: loadBalancer
-        dnsServiceIp: 172.16.0.10
-        serviceCidr: 172.16.0.0/16
+      networkPlugin: azure
+      networkPolicy: azure
+      outboundType: loadBalancer
+      dnsServiceIp: 172.16.0.10
+      serviceCidr: 172.16.0.0/16
     workloadAutoscalerProfile:
-      - kedaEnabled: true
-        verticalPodAutoscalerEnabled: true
+      kedaEnabled: true
+      verticalPodAutoscalerEnabled: true
     adminUser: "00000000-0000-0000-0000-000000000000" # replace with admin user Object ID
     tags:
       environment: db
@@ -69,7 +69,12 @@ spec:
       - 10.1.0.0/16
   virtualNetwork:
     addressSpace:
-      - 10.1.0.0/8
+      - 10.0.0.0/8
     tags:
       environment: db
       provisionedBy: Crossplane
+  resourceGroup:
+    tags:
+      environment: db
+      provisionedBy: Crossplane
+      COST: "change-me"
