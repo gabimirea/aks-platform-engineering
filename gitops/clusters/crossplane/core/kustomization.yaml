@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - ../addons
   #- ../aks0
-  - ../aks1
+  #- ../aks1
