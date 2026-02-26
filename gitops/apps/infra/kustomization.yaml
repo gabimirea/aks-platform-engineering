@@ -3,7 +3,3 @@ kind: Kustomization
 resources:
   - apps-deployment.yaml
   - DEMO-SERVICES-ArgoApp.yaml
-  #- CROSSPLANE-AKS0-ArgoApp.yaml
-  #- CROSSPLANE-AKS1-ArgoApp.yaml
-  #- APIM-ArgoApp.yaml
-  # - Other-Infra-ArgoApp.yaml
