@@ -35,6 +35,9 @@ spec:
       syncPolicy:
         retry:
           limit: 10
-        automated: {}
+        automated:
+          allowEmpty: true
+          prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
