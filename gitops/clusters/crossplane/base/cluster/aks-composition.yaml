@@ -57,10 +57,6 @@ spec:
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.annotations[crossplane.io/external-name]
           toFieldPath: metadata.annotations[crossplane.io/external-name]
-          transforms:
-          - type: string
-            string:
-              fmt: "%s-aks"
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.annotations[crossplane.io/external-name]
           toFieldPath: spec.forProvider.dnsPrefix
