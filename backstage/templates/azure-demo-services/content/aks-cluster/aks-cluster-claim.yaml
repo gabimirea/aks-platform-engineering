@@ -1,0 +1,85 @@
+apiVersion: kubernetes.example.com/v1alpha1
+kind: AksClusterClaim
+metadata:
+  name: ${{ values.aksClusterName }}
+  namespace: ${{ values.kubernetesNamespace }}
+  labels:
+    platform.demo/request: ${{ values.requestName }}
+  annotations:
+    crossplane.io/external-name: ${{ values.aksClusterName }}
+spec:
+  writeConnectionSecretToRef:
+    name: ${{ values.aksClusterName }}-secret
+  location: ${{ values.location }}
+  aks:
+    defaultNodePool:
+      name: system
+      vmSize: ${{ values.aksSystemNodeSize }}
+      enableAutoScaling: true
+      minCount: ${{ values.aksSystemMinCount }}
+      maxCount: ${{ values.aksSystemMaxCount }}
+      maxPods: 30
+      nodeLabels:
+        mode: system
+      onlyCriticalAddonsEnabled: false
+      osDiskSizeGb: 128
+      osDiskType: Managed
+      osSku: AzureLinux
+      type: VirtualMachineScaleSets
+    kubernetesVersion: ${{ values.aksKubernetesVersion }}
+    dnsPrefix: ${{ values.aksClusterName }}
+    roleBasedAccessControlEnabled: true
+    oidcIssuerEnabled: true
+    workloadIdentityEnabled: true
+    privateClusterEnabled: false
+    azureActiveDirectoryRoleBasedAccessControl:
+      adminGroupObjectIds:
+        - ${{ values.aksAdminObjectId }}
+      azureRbacEnabled: true
+      managed: true
+    azurePolicyEnabled: true
+    networkProfile:
+      networkPlugin: azure
+      networkPolicy: azure
+      outboundType: loadBalancer
+      dnsServiceIp: 172.16.0.10
+      serviceCidr: 172.16.0.0/16
+    workloadAutoscalerProfile:
+      kedaEnabled: true
+      verticalPodAutoscalerEnabled: true
+    adminUser: ${{ values.aksAdminObjectId }}
+    tags:
+      COST: ${{ values.costTag }}
+      provisionedBy: Backstage
+      requestName: ${{ values.requestName }}
+  userNodePool:
+    name: user
+    vmSize: ${{ values.aksUserNodeSize }}
+    enableAutoScaling: true
+    minCount: ${{ values.aksUserMinCount }}
+    maxCount: ${{ values.aksUserMaxCount }}
+    maxPods: 30
+    nodeLabels:
+      mode: user
+    osDiskSizeGb: 128
+    osDiskType: Managed
+    osSku: AzureLinux
+    osType: Linux
+  subnet:
+    name: mainsubnet
+    privateEndpointNetworkPoliciesEnabled: true
+    privateLinkServiceNetworkPoliciesEnabled: false
+    addressPrefixes:
+      - 10.20.1.0/24
+  virtualNetwork:
+    addressSpace:
+      - 10.20.0.0/16
+    tags:
+      COST: ${{ values.costTag }}
+      provisionedBy: Backstage
+      requestName: ${{ values.requestName }}
+  resourceGroup:
+    tags:
+      COST: ${{ values.costTag }}
+      provisionedBy: Backstage
+      requestName: ${{ values.requestName }}

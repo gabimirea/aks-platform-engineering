@@ -127,12 +127,13 @@ If you need to decommission workload clusters `aks0` and `aks1` (with `aks0` use
 
 Trademarks This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow Microsoft’s Trademark & Brand Guidelines. Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party’s policies.
 
-## 2. Backstage Portal Demo Services Record (VM + Storage Account)
+## 2. Backstage Portal Services Record (Storage Account + VM + AKS)
 
-This section records the implementation of a Backstage-driven, GitOps workflow for two demo services:
+This section records the implementation of a Backstage-driven, GitOps workflow for three portal services:
 
 - Azure Storage Account
 - Azure Virtual Machine
+- Azure Kubernetes Service (AKS) Cluster
 
 Provisioning strategy:
 
@@ -149,7 +150,7 @@ Deletion strategy (same model as create):
 
 ### Files Added
 
-- `backstage/templates/azure-demo-services/template.yaml`: Backstage software template to choose `storage-account` or `virtual-machine` and create a PR to this repo.
+- `backstage/templates/azure-demo-services/template.yaml`: Backstage software template to choose `storage-account`, `virtual-machine`, or `aks-cluster` and create a PR to this repo.
 - `backstage/templates/azure-demo-services/content/storage-account/resource-group.yaml`: Crossplane `ResourceGroup` manifest template for storage requests.
 - `backstage/templates/azure-demo-services/content/storage-account/storage-account.yaml`: Crossplane `storage Account` manifest template.
 - `backstage/templates/azure-demo-services/content/virtual-machine/00-resource-group.yaml`: Crossplane `ResourceGroup` manifest template for VM requests.
@@ -162,8 +163,9 @@ Deletion strategy (same model as create):
 - `backstage/templates/azure-demo-services/content/virtual-machine/06b-nic-nsg-association.yaml`: Crossplane `NetworkInterfaceSecurityGroupAssociation` template.
 - `backstage/templates/azure-demo-services/content/virtual-machine/07-vm-admin-secret.yaml`: Kubernetes secret template for VM admin password (demo usage).
 - `backstage/templates/azure-demo-services/content/virtual-machine/08-vm.yaml`: Crossplane `LinuxVirtualMachine` template.
-- `gitops/apps/infra/portal-services-argoapp.yaml`: Argo CD application that syncs all demo service request folders.
-- `gitops/apps/infra/portal-services/README.md`: Lifecycle and delete behavior documentation for demo services.
+- `backstage/templates/azure-demo-services/content/aks-cluster/aks-cluster-claim.yaml`: Crossplane `AksClusterClaim` template for AKS requests.
+- `gitops/apps/infra/portal-services-argoapp.yaml`: Argo CD application that syncs all portal service request folders.
+- `gitops/apps/infra/portal-services/README.md`: Lifecycle and delete behavior documentation for portal services.
 - `gitops/apps/infra/portal-services/instances/.gitkeep`: Placeholder to keep the instances folder in git.
 
 ### Files Updated
@@ -172,7 +174,7 @@ Deletion strategy (same model as create):
 - `backstage/app-config.production.yaml`: Registered production template location for `azure-demo-services`.
 - `gitops/bootstrap/control-plane/addons/backstage/app.yaml`: Added catalog template location for the new portal template in deployed Backstage.
 - `gitops/apps/infra/kustomization.yaml`: Included `portal-services-argoapp.yaml` in infra app-of-apps.
-- `docs/backstage.md`: Added documentation for the new VM/storage demo template and GitOps deletion flow.
+- `docs/backstage.md`: Added documentation for the portal services template and GitOps deletion flow.
 
 ### Request Folder Contract
 
@@ -279,8 +281,8 @@ kubectl get providerconfigs.azure.upbound.io
 kubectl -n backstage get pods
 kubectl -n backstage logs deploy/backstage --tail=100
 
-# 4) Demo templates visible in Backstage catalog
-# Open Backstage -> Create and confirm "Azure Demo Services (Storage Account or VM)" appears.
+# 4) Portal template visible in Backstage catalog
+# Open Backstage -> Create and confirm "Azure Portal Services (Storage Account, VM, or AKS)" appears.
 
 # 5) Demo GitOps path exists
 Get-ChildItem .\gitops\apps\infra\portal-services\instances

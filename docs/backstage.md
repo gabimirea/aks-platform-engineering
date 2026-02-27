@@ -19,12 +19,13 @@ In this project, Backstage is used to provide a unified developer portal that in
 - **Manage Services**: Using the Service Catalog to organize and manage microservices.
 - **Automate Workflows**: Using Software Templates to standardize project creation.
 
-## Demo Infrastructure Template (VM + Storage Account)
+## Portal Infrastructure Template (Storage Account + VM + AKS)
 
-This repository now includes a Backstage software template for two demo Azure services:
+This repository now includes a Backstage software template for three Azure services:
 
 - Storage Account
 - Virtual Machine (with required network resources)
+- AKS Cluster (via Crossplane `AksClusterClaim`)
 
 Template location:
 

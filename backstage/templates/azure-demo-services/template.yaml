@@ -1,9 +1,9 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: azure-demo-services-pr-template
-  title: Azure Demo Services (Storage Account or VM)
-  description: Create a GitOps pull request to provision one demo Azure service with Crossplane.
+  name: azure-portal-services-pr-template
+  title: Azure Portal Services (Storage Account, VM, or AKS)
+  description: Create a GitOps pull request to provision Azure services with Crossplane.
   tags:
     - azure
     - gitops
@@ -28,10 +28,15 @@ spec:
           title: Target Repository
           type: string
           description: Repository that Argo CD syncs from.
+          default: github.com?owner=gabimirea&repo=aks-platform-engineering
           ui:field: RepoUrlPicker
           ui:options:
             allowedHosts:
               - github.com
+            allowedOwners:
+              - gabimirea
+            allowedRepos:
+              - aks-platform-engineering
         requestName:
           title: Request Name
           type: string
@@ -39,11 +44,12 @@ spec:
           pattern: '^[a-z0-9-]+$'
           ui:help: Lowercase letters, numbers, and hyphens only.
         serviceType:
-          title: Demo Service Type
+          title: Portal Service Type
           type: string
           enum:
             - storage-account
             - virtual-machine
+            - aks-cluster
           default: storage-account
         resourceGroupName:
           title: Azure Resource Group
@@ -132,6 +138,55 @@ spec:
               required:
                 - vmName
                 - vmAdminPassword
+            - properties:
+                serviceType:
+                  enum:
+                    - aks-cluster
+                aksClusterName:
+                  title: AKS Cluster Name
+                  type: string
+                  pattern: '^[a-z0-9-]{3,63}$'
+                  ui:help: 3-63 lowercase letters, numbers, or hyphens.
+                aksAdminObjectId:
+                  title: AKS Admin Object ID
+                  type: string
+                  pattern: '^[0-9a-fA-F-]{36}$'
+                  ui:help: Microsoft Entra object ID used for AKS RBAC and role assignment.
+                aksKubernetesVersion:
+                  title: AKS Kubernetes Version
+                  type: string
+                  default: "1.29.9"
+                aksSystemNodeSize:
+                  title: AKS System Node VM Size
+                  type: string
+                  default: Standard_D2s_v3
+                aksSystemMinCount:
+                  title: AKS System Node Min Count
+                  type: integer
+                  default: 1
+                  minimum: 1
+                aksSystemMaxCount:
+                  title: AKS System Node Max Count
+                  type: integer
+                  default: 3
+                  minimum: 1
+                aksUserNodeSize:
+                  title: AKS User Node VM Size
+                  type: string
+                  default: Standard_B2s
+                aksUserMinCount:
+                  title: AKS User Node Min Count
+                  type: integer
+                  default: 1
+                  minimum: 1
+                aksUserMaxCount:
+                  title: AKS User Node Max Count
+                  type: integer
+                  default: 3
+                  minimum: 1
+              required:
+                - aksClusterName
+                - aksAdminObjectId
 
   steps:
     - id: generate-storage
@@ -171,15 +226,39 @@ spec:
           vmAdminUsername: ${{ parameters.vmAdminUsername }}
           vmAdminPassword: ${{ parameters.vmAdminPassword }}
 
+    - id: generate-aks
+      name: Generate AKS Manifests (If Selected)
+      if: ${{ parameters.serviceType == 'aks-cluster' }}
+      action: fetch:template
+      input:
+        url: ./content/aks-cluster
+        targetPath: ./out
+        values:
+          requestName: ${{ parameters.requestName }}
+          resourceGroupName: ${{ parameters.resourceGroupName }}
+          costTag: ${{ parameters.costTag }}
+          location: ${{ parameters.location }}
+          kubernetesNamespace: ${{ parameters.kubernetesNamespace }}
+          providerConfigName: ${{ parameters.providerConfigName }}
+          aksClusterName: ${{ parameters.aksClusterName }}
+          aksAdminObjectId: ${{ parameters.aksAdminObjectId }}
+          aksKubernetesVersion: ${{ parameters.aksKubernetesVersion }}
+          aksSystemNodeSize: ${{ parameters.aksSystemNodeSize }}
+          aksSystemMinCount: ${{ parameters.aksSystemMinCount }}
+          aksSystemMaxCount: ${{ parameters.aksSystemMaxCount }}
+          aksUserNodeSize: ${{ parameters.aksUserNodeSize }}
+          aksUserMinCount: ${{ parameters.aksUserMinCount }}
+          aksUserMaxCount: ${{ parameters.aksUserMaxCount }}
+
     - id: create-pr
       name: Create Pull Request
       action: publish:github:pull-request
       input:
         repoUrl: ${{ parameters.repoUrl }}
-        branchName: backstage-demo-${{ parameters.requestName }}
+        branchName: backstage-portal-${{ parameters.requestName }}
         title: "feat(infra): add ${{ parameters.serviceType }} request '${{ parameters.requestName }}'"
         description: |
-          Backstage-generated demo service request.
+          Backstage-generated portal service request.
 
           - Service type: `${{ parameters.serviceType }}`
           - Request name: `${{ parameters.requestName }}`
@@ -188,7 +267,7 @@ spec:
         sourcePath: ./out
         targetPath: gitops/apps/infra/portal-services/instances/${{ parameters.requestName }}
         update: true
-        commitMessage: "feat(infra): add demo service request ${{ parameters.requestName }}"
+        commitMessage: "feat(infra): add portal service request ${{ parameters.requestName }}"
 
   output:
     links:
