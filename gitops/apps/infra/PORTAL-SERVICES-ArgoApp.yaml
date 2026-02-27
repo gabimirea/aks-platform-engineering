@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: demo-services
+  name: portal-services
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/gabimirea/aks-platform-engineering.git
     targetRevision: main
-    path: gitops/apps/infra/demo-services/instances
+    path: gitops/apps/infra/portal-services/instances
     directory:
       recurse: true
   destination:
@@ -25,3 +25,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+

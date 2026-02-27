@@ -1,10 +1,10 @@
-# Demo Services
+# Portal Services
 
-This folder is reconciled by Argo CD using `gitops/apps/infra/DEMO-SERVICES-ArgoApp.yaml`.
+This folder is reconciled by Argo CD using `gitops/apps/infra/PORTAL-SERVICES-ArgoApp.yaml`.
 
 Each request should be created in a dedicated subfolder under:
 
-- `gitops/apps/infra/demo-services/instances/<request-name>/`
+- `gitops/apps/infra/portal-services/instances/<request-name>/`
 
 Crossplane manifests in this folder assume Azure `ProviderConfig` named `default`
 (or the name selected in the Backstage form).
@@ -21,9 +21,10 @@ Deletion follows the same strategy as creation:
 
 1. Open a pull request.
 2. Remove the request folder:
-   - `gitops/apps/infra/demo-services/instances/<request-name>/`
+   - `gitops/apps/infra/portal-services/instances/<request-name>/`
 3. Merge the pull request.
 
 Argo CD will detect removed manifests and prune resources.
 Crossplane reconciles deletion of the Azure resources represented by those manifests
 (no manual `kubectl delete` required).
+

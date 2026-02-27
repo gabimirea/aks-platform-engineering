@@ -32,16 +32,16 @@ Template location:
 
 When executed, the template creates a PR into:
 
-- `gitops/apps/infra/demo-services/instances/<request-name>/`
+- `gitops/apps/infra/portal-services/instances/<request-name>/`
 
 Argo CD then syncs that folder through:
 
-- `gitops/apps/infra/DEMO-SERVICES-ArgoApp.yaml`
+- `gitops/apps/infra/PORTAL-SERVICES-ArgoApp.yaml`
 
 Delete is handled with the same GitOps strategy:
 
 1. Open PR
-2. Remove `gitops/apps/infra/demo-services/instances/<request-name>/`
+2. Remove `gitops/apps/infra/portal-services/instances/<request-name>/`
 3. Merge PR
 4. Argo CD prunes removed manifests and Crossplane reconciles deletion in Azure
 
@@ -199,3 +199,4 @@ Give Application.ReadWrite.All permissions.
 - [Backstage Documentation](https://backstage.io/docs)
 - [Spotify's Backstage Blog](https://backstage.io/blog)
 - [Project README](../README.md)
+

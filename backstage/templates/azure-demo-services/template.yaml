@@ -35,7 +35,7 @@ spec:
         requestName:
           title: Request Name
           type: string
-          description: Folder name for this request under demo-services/instances.
+          description: Folder name for this request under portal-services/instances.
           pattern: '^[a-z0-9-]+$'
           ui:help: Lowercase letters, numbers, and hyphens only.
         serviceType:
@@ -186,7 +186,7 @@ spec:
           - Azure location: `${{ parameters.location }}`
           - Resource group: `${{ parameters.resourceGroupName }}`
         sourcePath: ./out
-        targetPath: gitops/apps/infra/demo-services/instances/${{ parameters.requestName }}
+        targetPath: gitops/apps/infra/portal-services/instances/${{ parameters.requestName }}
         update: true
         commitMessage: "feat(infra): add demo service request ${{ parameters.requestName }}"
 
@@ -194,3 +194,4 @@ spec:
     links:
       - title: Pull Request
         url: ${{ steps['create-pr'].output.remoteUrl }}
+

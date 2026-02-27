@@ -162,23 +162,23 @@ Deletion strategy (same model as create):
 - `backstage/templates/azure-demo-services/content/virtual-machine/06b-nic-nsg-association.yaml`: Crossplane `NetworkInterfaceSecurityGroupAssociation` template.
 - `backstage/templates/azure-demo-services/content/virtual-machine/07-vm-admin-secret.yaml`: Kubernetes secret template for VM admin password (demo usage).
 - `backstage/templates/azure-demo-services/content/virtual-machine/08-vm.yaml`: Crossplane `LinuxVirtualMachine` template.
-- `gitops/apps/infra/DEMO-SERVICES-ArgoApp.yaml`: Argo CD application that syncs all demo service request folders.
-- `gitops/apps/infra/demo-services/README.md`: Lifecycle and delete behavior documentation for demo services.
-- `gitops/apps/infra/demo-services/instances/.gitkeep`: Placeholder to keep the instances folder in git.
+- `gitops/apps/infra/PORTAL-SERVICES-ArgoApp.yaml`: Argo CD application that syncs all demo service request folders.
+- `gitops/apps/infra/portal-services/README.md`: Lifecycle and delete behavior documentation for demo services.
+- `gitops/apps/infra/portal-services/instances/.gitkeep`: Placeholder to keep the instances folder in git.
 
 ### Files Updated
 
 - `backstage/app-config.yaml`: Registered local template location for `azure-demo-services`.
 - `backstage/app-config.production.yaml`: Registered production template location for `azure-demo-services`.
 - `gitops/bootstrap/control-plane/addons/backstage/app.yaml`: Added catalog template location for the new portal template in deployed Backstage.
-- `gitops/apps/infra/kustomization.yaml`: Included `DEMO-SERVICES-ArgoApp.yaml` in infra app-of-apps.
+- `gitops/apps/infra/kustomization.yaml`: Included `PORTAL-SERVICES-ArgoApp.yaml` in infra app-of-apps.
 - `docs/backstage.md`: Added documentation for the new VM/storage demo template and GitOps deletion flow.
 
 ### Request Folder Contract
 
 Backstage PRs target this path:
 
-- `gitops/apps/infra/demo-services/instances/<request-name>/`
+- `gitops/apps/infra/portal-services/instances/<request-name>/`
 
 Each request folder is the unit of lifecycle:
 
@@ -254,7 +254,7 @@ Infra app toggles:
     - `APIM-ArgoApp.yaml`
     - `CROSSPLANE-AKS0-ArgoApp.yaml`
     - `CROSSPLANE-AKS1-ArgoApp.yaml`
-    - `DEMO-SERVICES-ArgoApp.yaml`
+    - `PORTAL-SERVICES-ArgoApp.yaml`
 
 Apply after toggles:
 
@@ -283,5 +283,6 @@ kubectl -n backstage logs deploy/backstage --tail=100
 # Open Backstage -> Create and confirm "Azure Demo Services (Storage Account or VM)" appears.
 
 # 5) Demo GitOps path exists
-Get-ChildItem .\gitops\apps\infra\demo-services\instances
+Get-ChildItem .\gitops\apps\infra\portal-services\instances
 ```
+
