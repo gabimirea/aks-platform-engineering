@@ -1,6 +1,6 @@
 # Portal Services
 
-This folder is reconciled by Argo CD using `gitops/apps/infra/PORTAL-SERVICES-ArgoApp.yaml`.
+This folder is reconciled by Argo CD using `gitops/apps/infra/portal-services-argoapp.yaml`.
 
 Each request should be created in a dedicated subfolder under:
 
@@ -27,4 +27,5 @@ Deletion follows the same strategy as creation:
 Argo CD will detect removed manifests and prune resources.
 Crossplane reconciles deletion of the Azure resources represented by those manifests
 (no manual `kubectl delete` required).
+
 

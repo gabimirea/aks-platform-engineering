@@ -36,7 +36,7 @@ When executed, the template creates a PR into:
 
 Argo CD then syncs that folder through:
 
-- `gitops/apps/infra/PORTAL-SERVICES-ArgoApp.yaml`
+- `gitops/apps/infra/portal-services-argoapp.yaml`
 
 Delete is handled with the same GitOps strategy:
 
@@ -199,4 +199,5 @@ Give Application.ReadWrite.All permissions.
 - [Backstage Documentation](https://backstage.io/docs)
 - [Spotify's Backstage Blog](https://backstage.io/blog)
 - [Project README](../README.md)
+
 

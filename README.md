@@ -162,7 +162,7 @@ Deletion strategy (same model as create):
 - `backstage/templates/azure-demo-services/content/virtual-machine/06b-nic-nsg-association.yaml`: Crossplane `NetworkInterfaceSecurityGroupAssociation` template.
 - `backstage/templates/azure-demo-services/content/virtual-machine/07-vm-admin-secret.yaml`: Kubernetes secret template for VM admin password (demo usage).
 - `backstage/templates/azure-demo-services/content/virtual-machine/08-vm.yaml`: Crossplane `LinuxVirtualMachine` template.
-- `gitops/apps/infra/PORTAL-SERVICES-ArgoApp.yaml`: Argo CD application that syncs all demo service request folders.
+- `gitops/apps/infra/portal-services-argoapp.yaml`: Argo CD application that syncs all demo service request folders.
 - `gitops/apps/infra/portal-services/README.md`: Lifecycle and delete behavior documentation for demo services.
 - `gitops/apps/infra/portal-services/instances/.gitkeep`: Placeholder to keep the instances folder in git.
 
@@ -171,7 +171,7 @@ Deletion strategy (same model as create):
 - `backstage/app-config.yaml`: Registered local template location for `azure-demo-services`.
 - `backstage/app-config.production.yaml`: Registered production template location for `azure-demo-services`.
 - `gitops/bootstrap/control-plane/addons/backstage/app.yaml`: Added catalog template location for the new portal template in deployed Backstage.
-- `gitops/apps/infra/kustomization.yaml`: Included `PORTAL-SERVICES-ArgoApp.yaml` in infra app-of-apps.
+- `gitops/apps/infra/kustomization.yaml`: Included `portal-services-argoapp.yaml` in infra app-of-apps.
 - `docs/backstage.md`: Added documentation for the new VM/storage demo template and GitOps deletion flow.
 
 ### Request Folder Contract
@@ -254,7 +254,7 @@ Infra app toggles:
     - `APIM-ArgoApp.yaml`
     - `CROSSPLANE-AKS0-ArgoApp.yaml`
     - `CROSSPLANE-AKS1-ArgoApp.yaml`
-    - `PORTAL-SERVICES-ArgoApp.yaml`
+    - `portal-services-argoapp.yaml`
 
 Apply after toggles:
 
@@ -285,4 +285,5 @@ kubectl -n backstage logs deploy/backstage --tail=100
 # 5) Demo GitOps path exists
 Get-ChildItem .\gitops\apps\infra\portal-services\instances
 ```
+
 
