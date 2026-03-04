@@ -8,6 +8,7 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   location: ${{ values.location }}
+  resourceGroupName: ${{ values.resourceGroupName }}
   adminUsername: ${{ values.vmAdminUsername }}
   sshPublicKey: ${{ values.vmSshPublicKey }}
   vmSize: ${{ values.vmSize }}

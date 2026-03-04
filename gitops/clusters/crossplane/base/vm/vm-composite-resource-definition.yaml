@@ -27,6 +27,9 @@ spec:
                 location:
                   type: string
                   description: Azure location for all resources.
+                resourceGroupName:
+                  type: string
+                  description: Existing Azure resource group name to deploy VM resources into.
                 adminUsername:
                   type: string
                   description: Linux admin username.
@@ -90,6 +93,7 @@ spec:
                     type: string
               required:
                 - location
+                - resourceGroupName
                 - adminUsername
                 - sshPublicKey
                 - vmSize

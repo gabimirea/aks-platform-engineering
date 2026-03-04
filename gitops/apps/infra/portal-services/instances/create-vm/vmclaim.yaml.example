@@ -8,6 +8,7 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   location: swedencentral
+  resourceGroupName: my-existing-resource-group
   adminUsername: azureuser
   sshPublicKey: "ssh-rsa CHANGE_ME"
   vmSize: Standard_B2s

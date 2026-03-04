@@ -27,28 +27,12 @@ spec:
           toFieldPath: spec.forProvider.tags
           policy:
             fromFieldPath: Optional
-  resources:
-    - name: vm-resource-group
-      base:
-        apiVersion: azure.upbound.io/v1beta1
-        kind: ResourceGroup
-        spec:
-          forProvider:
-            location: swedencentral
+    - name: resource-group-name-patch
       patches:
-        - type: PatchSet
-          patchSetName: location-patch
-        - type: PatchSet
-          patchSetName: metadata-patch
-        - type: PatchSet
-          patchSetName: tags-patch
         - type: FromCompositeFieldPath
-          fromFieldPath: metadata.annotations[crossplane.io/external-name]
-          toFieldPath: metadata.annotations[crossplane.io/external-name]
-          transforms:
-            - type: string
-              string:
-                fmt: "%s-rg"
+          fromFieldPath: spec.resourceGroupName
+          toFieldPath: spec.forProvider.resourceGroupName
+  resources:
     - name: vm-virtual-network
       base:
         apiVersion: network.azure.upbound.io/v1beta2
@@ -57,11 +41,12 @@ spec:
           forProvider:
             addressSpace:
               - 10.20.0.0/16
-            resourceGroupNameSelector:
-              matchControllerRef: true
+            resourceGroupName: change-me
       patches:
         - type: PatchSet
           patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: metadata-patch
         - type: PatchSet
@@ -86,11 +71,12 @@ spec:
           forProvider:
             addressPrefixes:
               - 10.20.1.0/24
-            resourceGroupNameSelector:
-              matchControllerRef: true
+            resourceGroupName: change-me
             virtualNetworkNameSelector:
               matchControllerRef: true
       patches:
+        - type: PatchSet
+          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: metadata-patch
         - type: FromCompositeFieldPath
@@ -113,11 +99,12 @@ spec:
           forProvider:
             allocationMethod: Static
             sku: Standard
-            resourceGroupNameSelector:
-              matchControllerRef: true
+            resourceGroupName: change-me
       patches:
         - type: PatchSet
           patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: metadata-patch
         - type: PatchSet
@@ -150,11 +137,12 @@ spec:
                 destinationPortRange: "22"
                 sourceAddressPrefix: "*"
                 destinationAddressPrefix: "*"
-            resourceGroupNameSelector:
-              matchControllerRef: true
+            resourceGroupName: change-me
       patches:
         - type: PatchSet
           patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: metadata-patch
         - type: PatchSet
@@ -180,11 +168,12 @@ spec:
                   matchControllerRef: true
                 publicIpAddressIdSelector:
                   matchControllerRef: true
-            resourceGroupNameSelector:
-              matchControllerRef: true
+            resourceGroupName: change-me
       patches:
         - type: PatchSet
           patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: metadata-patch
         - type: PatchSet
@@ -228,8 +217,7 @@ spec:
               caching: ReadWrite
               storageAccountType: Standard_LRS
               diskSizeGb: 30
-            resourceGroupNameSelector:
-              matchControllerRef: true
+            resourceGroupName: change-me
             size: Standard_B2s
             sourceImageReference:
               publisher: Canonical
@@ -242,6 +230,8 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: metadata-patch
         - type: PatchSet
