@@ -61,10 +61,7 @@ spec:
           policy:
             fromFieldPath: Optional
       readinessChecks:
-        - type: MatchCondition
-          matchCondition:
-            type: Ready
-            status: "True"
+        - type: None
     - name: vm-subnet
       base:
         apiVersion: network.azure.upbound.io/v1beta2
