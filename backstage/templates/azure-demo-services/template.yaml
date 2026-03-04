@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: azure-portal-services-pr-template
-  title: Azure Portal Services (Storage Account, VM, or AKS)
+  title: Azure Portal Services (Storage Account, VM, AKS, VM Delete)
   description: Create a GitOps pull request to provision Azure services with Crossplane.
   tags:
     - azure
@@ -49,6 +49,7 @@ spec:
           enum:
             - storage-account
             - virtual-machine
+            - virtual-machine-delete
             - aks-cluster
           default: storage-account
         resourceGroupName:
@@ -134,6 +135,11 @@ spec:
               required:
                 - vmName
                 - vmSshPublicKey
+            - properties:
+                serviceType:
+                  enum:
+                    - virtual-machine-delete
+              required: []
             - properties:
                 serviceType:
                   enum:
@@ -248,6 +254,7 @@ spec:
 
     - id: create-pr
       name: Create Pull Request
+      if: ${{ parameters.serviceType != 'virtual-machine-delete' }}
       action: publish:github:pull-request
       input:
         repoUrl: ${{ parameters.repoUrl }}
@@ -265,8 +272,28 @@ spec:
         update: true
         commitMessage: "feat(infra): add portal service request ${{ parameters.requestName }}"
 
+    - id: delete-vm-pr
+      name: Create Pull Request (Delete VM Request)
+      if: ${{ parameters.serviceType == 'virtual-machine-delete' }}
+      action: publish:github:pull-request
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        branchName: backstage-portal-delete-${{ parameters.requestName }}
+        title: "chore(infra): delete vm request '${{ parameters.requestName }}'"
+        description: |
+          Backstage-generated VM delete request.
+
+          - Service type: `${{ parameters.serviceType }}`
+          - Request name: `${{ parameters.requestName }}`
+          - This PR deletes `vmclaim.yaml` so Argo prunes the VM resources.
+        filesToDelete:
+          - gitops/apps/infra/portal-services/instances/${{ parameters.requestName }}/vmclaim.yaml
+        createWhenEmpty: true
+        update: true
+        commitMessage: "chore(infra): delete portal vm request ${{ parameters.requestName }}"
+
   output:
     links:
       - title: Pull Request
-        url: ${{ steps['create-pr'].output.remoteUrl }}
+        url: ${{ steps['create-pr'].output.remoteUrl || steps['delete-vm-pr'].output.remoteUrl }}
 
