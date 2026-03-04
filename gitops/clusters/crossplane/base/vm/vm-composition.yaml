@@ -25,12 +25,27 @@ spec:
           toFieldPath: spec.forProvider.tags
           policy:
             fromFieldPath: Optional
-    - name: resource-group-name-patch
+  resources:
+    - name: vm-resource-group
+      base:
+        apiVersion: azure.upbound.io/v1beta1
+        kind: ResourceGroup
+        spec:
+          forProvider:
+            location: swedencentral
       patches:
+        - type: PatchSet
+          patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: tags-patch
         - type: FromCompositeFieldPath
           fromFieldPath: spec.resourceGroupName
-          toFieldPath: spec.forProvider.resourceGroupName
-  resources:
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
     - name: vm-virtual-network
       base:
         apiVersion: network.azure.upbound.io/v1beta2
@@ -39,12 +54,11 @@ spec:
           forProvider:
             addressSpace:
               - 10.20.0.0/16
-            resourceGroupName: change-me
+            resourceGroupNameSelector:
+              matchControllerRef: true
       patches:
         - type: PatchSet
           patchSetName: location-patch
-        - type: PatchSet
-          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
@@ -70,12 +84,11 @@ spec:
           forProvider:
             addressPrefixes:
               - 10.20.1.0/24
-            resourceGroupName: change-me
+            resourceGroupNameSelector:
+              matchControllerRef: true
             virtualNetworkNameSelector:
               matchControllerRef: true
       patches:
-        - type: PatchSet
-          patchSetName: resource-group-name-patch
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.annotations[crossplane.io/external-name]
           toFieldPath: metadata.annotations[crossplane.io/external-name]
@@ -102,12 +115,11 @@ spec:
           forProvider:
             allocationMethod: Static
             sku: Standard
-            resourceGroupName: change-me
+            resourceGroupNameSelector:
+              matchControllerRef: true
       patches:
         - type: PatchSet
           patchSetName: location-patch
-        - type: PatchSet
-          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
@@ -144,12 +156,11 @@ spec:
                 destinationPortRange: "22"
                 sourceAddressPrefix: "*"
                 destinationAddressPrefix: "*"
-            resourceGroupName: change-me
+            resourceGroupNameSelector:
+              matchControllerRef: true
       patches:
         - type: PatchSet
           patchSetName: location-patch
-        - type: PatchSet
-          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
@@ -179,12 +190,11 @@ spec:
                   matchControllerRef: true
                 publicIpAddressIdSelector:
                   matchControllerRef: true
-            resourceGroupName: change-me
+            resourceGroupNameSelector:
+              matchControllerRef: true
       patches:
         - type: PatchSet
           patchSetName: location-patch
-        - type: PatchSet
-          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
@@ -234,7 +244,8 @@ spec:
               caching: ReadWrite
               storageAccountType: Standard_LRS
               diskSizeGb: 30
-            resourceGroupName: change-me
+            resourceGroupNameSelector:
+              matchControllerRef: true
             size: Standard_B2s
             sourceImageReference:
               publisher: Canonical
@@ -247,8 +258,6 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: location-patch
-        - type: PatchSet
-          patchSetName: resource-group-name-patch
         - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath

@@ -29,7 +29,7 @@ spec:
                   description: Azure location for all resources.
                 resourceGroupName:
                   type: string
-                  description: Existing Azure resource group name to deploy VM resources into.
+                  description: Azure resource group name to create and use for VM resources.
                 adminUsername:
                   type: string
                   description: Linux admin username.
