@@ -126,18 +126,14 @@ spec:
                   title: VM Admin Username
                   type: string
                   default: azureuser
-                vmAdminPassword:
-                  title: VM Admin Password
+                vmSshPublicKey:
+                  title: VM SSH Public Key
                   type: string
-                  ui:field: Secret
-                  minLength: 6
-                  maxLength: 72
-                  pattern: '^.{6,72}$'
-                  description: Demo only. Consider using Key Vault + External Secrets for production.
-                  ui:help: 6-72 chars, include uppercase, lowercase, number, and special character.
+                  description: SSH public key in ssh-rsa format.
+                  ui:widget: textarea
               required:
                 - vmName
-                - vmAdminPassword
+                - vmSshPublicKey
             - properties:
                 serviceType:
                   enum:
@@ -212,7 +208,7 @@ spec:
       if: ${{ parameters.serviceType == 'virtual-machine' }}
       action: fetch:template
       input:
-        url: ./content/virtual-machine
+        url: ./content/virtual-machine-claim
         targetPath: ./out
         values:
           requestName: ${{ parameters.requestName }}
@@ -224,7 +220,7 @@ spec:
           vmName: ${{ parameters.vmName }}
           vmSize: ${{ parameters.vmSize }}
           vmAdminUsername: ${{ parameters.vmAdminUsername }}
-          vmAdminPassword: ${{ parameters.vmAdminPassword }}
+          vmSshPublicKey: ${{ parameters.vmSshPublicKey }}
 
     - id: generate-aks
       name: Generate AKS Manifests (If Selected)
