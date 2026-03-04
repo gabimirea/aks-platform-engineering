@@ -1,0 +1,30 @@
+apiVersion: kubernetes.example.com/v1alpha1
+kind: VMClaim
+metadata:
+  name: vm-sdc-001
+  annotations:
+    crossplane.io/external-name: vm-sdc-001
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  location: swedencentral
+  adminUsername: azureuser
+  sshPublicKey: "ssh-rsa CHANGE_ME"
+  vmSize: Standard_B2s
+  image:
+    publisher: Canonical
+    offer: 0001-com-ubuntu-server-jammy
+    sku: 22_04-lts
+    version: latest
+  osDisk:
+    storageAccountType: Standard_LRS
+    diskSizeGb: 30
+  network:
+    vnetAddressSpace:
+      - 10.20.0.0/16
+    subnetPrefix: 10.20.1.0/24
+    privateIpAddressAllocation: Dynamic
+    publicIpAllocationMethod: Static
+  tags:
+    environment: demo
+    provisionedBy: crossplane

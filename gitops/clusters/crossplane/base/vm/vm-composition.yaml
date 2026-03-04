@@ -1,0 +1,297 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: linux-vm-with-network
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  compositeTypeRef:
+    apiVersion: kubernetes.example.com/v1alpha1
+    kind: XVMInstance
+  patchSets:
+    - name: location-patch
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.location
+          toFieldPath: spec.forProvider.location
+    - name: metadata-patch
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations
+          toFieldPath: metadata.annotations
+    - name: tags-patch
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+          policy:
+            fromFieldPath: Optional
+  resources:
+    - name: vm-resource-group
+      base:
+        apiVersion: azure.upbound.io/v1beta1
+        kind: ResourceGroup
+        spec:
+          forProvider:
+            location: swedencentral
+      patches:
+        - type: PatchSet
+          patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: metadata-patch
+        - type: PatchSet
+          patchSetName: tags-patch
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-rg"
+    - name: vm-virtual-network
+      base:
+        apiVersion: network.azure.upbound.io/v1beta2
+        kind: VirtualNetwork
+        spec:
+          forProvider:
+            addressSpace:
+              - 10.20.0.0/16
+            resourceGroupNameSelector:
+              matchControllerRef: true
+      patches:
+        - type: PatchSet
+          patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: metadata-patch
+        - type: PatchSet
+          patchSetName: tags-patch
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-vnet"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.network.vnetAddressSpace
+          toFieldPath: spec.forProvider.addressSpace
+          policy:
+            fromFieldPath: Optional
+    - name: vm-subnet
+      base:
+        apiVersion: network.azure.upbound.io/v1beta2
+        kind: Subnet
+        spec:
+          forProvider:
+            addressPrefixes:
+              - 10.20.1.0/24
+            resourceGroupNameSelector:
+              matchControllerRef: true
+            virtualNetworkNameSelector:
+              matchControllerRef: true
+      patches:
+        - type: PatchSet
+          patchSetName: metadata-patch
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-subnet"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.network.subnetPrefix
+          toFieldPath: spec.forProvider.addressPrefixes[0]
+          policy:
+            fromFieldPath: Optional
+    - name: vm-public-ip
+      base:
+        apiVersion: network.azure.upbound.io/v1beta1
+        kind: PublicIP
+        spec:
+          forProvider:
+            allocationMethod: Static
+            sku: Standard
+            resourceGroupNameSelector:
+              matchControllerRef: true
+      patches:
+        - type: PatchSet
+          patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: metadata-patch
+        - type: PatchSet
+          patchSetName: tags-patch
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-pip"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.network.publicIpAllocationMethod
+          toFieldPath: spec.forProvider.allocationMethod
+          policy:
+            fromFieldPath: Optional
+    - name: vm-security-group
+      base:
+        apiVersion: network.azure.upbound.io/v1beta1
+        kind: SecurityGroup
+        spec:
+          forProvider:
+            securityRule:
+              - access: Allow
+                direction: Inbound
+                name: allow-ssh
+                priority: 1001
+                protocol: Tcp
+                sourcePortRange: "*"
+                destinationPortRange: "22"
+                sourceAddressPrefix: "*"
+                destinationAddressPrefix: "*"
+            resourceGroupNameSelector:
+              matchControllerRef: true
+      patches:
+        - type: PatchSet
+          patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: metadata-patch
+        - type: PatchSet
+          patchSetName: tags-patch
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-nsg"
+    - name: vm-network-interface
+      base:
+        apiVersion: network.azure.upbound.io/v1beta1
+        kind: NetworkInterface
+        spec:
+          forProvider:
+            ipConfiguration:
+              - name: primary
+                privateIpAddressAllocation: Dynamic
+                primary: true
+                subnetIdSelector:
+                  matchControllerRef: true
+                publicIpAddressIdSelector:
+                  matchControllerRef: true
+            resourceGroupNameSelector:
+              matchControllerRef: true
+      patches:
+        - type: PatchSet
+          patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: metadata-patch
+        - type: PatchSet
+          patchSetName: tags-patch
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-nic"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.network.privateIpAddressAllocation
+          toFieldPath: spec.forProvider.ipConfiguration[0].privateIpAddressAllocation
+          policy:
+            fromFieldPath: Optional
+    - name: vm-nic-nsg-association
+      base:
+        apiVersion: network.azure.upbound.io/v1beta1
+        kind: NetworkInterfaceSecurityGroupAssociation
+        spec:
+          forProvider:
+            networkInterfaceIdSelector:
+              matchControllerRef: true
+            networkSecurityGroupIdSelector:
+              matchControllerRef: true
+      patches:
+        - type: PatchSet
+          patchSetName: metadata-patch
+    - name: vm-linux
+      base:
+        apiVersion: compute.azure.upbound.io/v1beta2
+        kind: LinuxVirtualMachine
+        spec:
+          forProvider:
+            adminUsername: azureuser
+            disablePasswordAuthentication: true
+            networkInterfaceIdsSelector:
+              matchControllerRef: true
+            osDisk:
+              caching: ReadWrite
+              storageAccountType: Standard_LRS
+              diskSizeGb: 30
+            resourceGroupNameSelector:
+              matchControllerRef: true
+            size: Standard_B2s
+            sourceImageReference:
+              publisher: Canonical
+              offer: 0001-com-ubuntu-server-jammy
+              sku: 22_04-lts
+              version: latest
+            adminSshKey:
+              - username: azureuser
+                publicKey: ssh-rsa CHANGE_ME
+      patches:
+        - type: PatchSet
+          patchSetName: location-patch
+        - type: PatchSet
+          patchSetName: metadata-patch
+        - type: PatchSet
+          patchSetName: tags-patch
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.annotations[crossplane.io/external-name]
+          toFieldPath: metadata.annotations[crossplane.io/external-name]
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-vm"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.adminUsername
+          toFieldPath: spec.forProvider.adminUsername
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.adminUsername
+          toFieldPath: spec.forProvider.adminSshKey[0].username
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.sshPublicKey
+          toFieldPath: spec.forProvider.adminSshKey[0].publicKey
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.vmSize
+          toFieldPath: spec.forProvider.size
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.image.publisher
+          toFieldPath: spec.forProvider.sourceImageReference.publisher
+          policy:
+            fromFieldPath: Optional
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.image.offer
+          toFieldPath: spec.forProvider.sourceImageReference.offer
+          policy:
+            fromFieldPath: Optional
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.image.sku
+          toFieldPath: spec.forProvider.sourceImageReference.sku
+          policy:
+            fromFieldPath: Optional
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.image.version
+          toFieldPath: spec.forProvider.sourceImageReference.version
+          policy:
+            fromFieldPath: Optional
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.osDisk.storageAccountType
+          toFieldPath: spec.forProvider.osDisk.storageAccountType
+          policy:
+            fromFieldPath: Optional
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.osDisk.diskSizeGb
+          toFieldPath: spec.forProvider.osDisk.diskSizeGb
+          policy:
+            fromFieldPath: Optional

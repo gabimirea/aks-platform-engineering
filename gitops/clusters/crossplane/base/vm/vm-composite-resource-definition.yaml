@@ -1,0 +1,95 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xvminstances.kubernetes.example.com
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  group: kubernetes.example.com
+  names:
+    kind: XVMInstance
+    plural: xvminstances
+  claimNames:
+    kind: VMClaim
+    plural: vmclaims
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                location:
+                  type: string
+                  description: Azure location for all resources.
+                adminUsername:
+                  type: string
+                  description: Linux admin username.
+                sshPublicKey:
+                  type: string
+                  description: SSH public key in ssh-rsa format.
+                vmSize:
+                  type: string
+                  description: Azure VM size, for example Standard_B2s.
+                image:
+                  type: object
+                  properties:
+                    publisher:
+                      type: string
+                      default: Canonical
+                    offer:
+                      type: string
+                      default: 0001-com-ubuntu-server-jammy
+                    sku:
+                      type: string
+                      default: 22_04-lts
+                    version:
+                      type: string
+                      default: latest
+                osDisk:
+                  type: object
+                  properties:
+                    storageAccountType:
+                      type: string
+                      default: Standard_LRS
+                    diskSizeGb:
+                      type: integer
+                      default: 30
+                network:
+                  type: object
+                  properties:
+                    vnetAddressSpace:
+                      type: array
+                      items:
+                        type: string
+                      default:
+                        - 10.20.0.0/16
+                    subnetPrefix:
+                      type: string
+                      default: 10.20.1.0/24
+                    privateIpAddressAllocation:
+                      type: string
+                      enum:
+                        - Dynamic
+                        - Static
+                      default: Dynamic
+                    publicIpAllocationMethod:
+                      type: string
+                      enum:
+                        - Static
+                        - Dynamic
+                      default: Static
+                tags:
+                  type: object
+                  additionalProperties:
+                    type: string
+              required:
+                - location
+                - adminUsername
+                - sshPublicKey
+                - vmSize
