@@ -15,11 +15,6 @@ spec:
         - type: FromCompositeFieldPath
           fromFieldPath: spec.location
           toFieldPath: spec.forProvider.location
-    - name: metadata-patch
-      patches:
-        - type: FromCompositeFieldPath
-          fromFieldPath: metadata.annotations
-          toFieldPath: metadata.annotations
     - name: tags-patch
       patches:
         - type: FromCompositeFieldPath
@@ -48,8 +43,6 @@ spec:
         - type: PatchSet
           patchSetName: resource-group-name-patch
         - type: PatchSet
-          patchSetName: metadata-patch
-        - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.annotations[crossplane.io/external-name]
@@ -77,8 +70,6 @@ spec:
       patches:
         - type: PatchSet
           patchSetName: resource-group-name-patch
-        - type: PatchSet
-          patchSetName: metadata-patch
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.annotations[crossplane.io/external-name]
           toFieldPath: metadata.annotations[crossplane.io/external-name]
@@ -105,8 +96,6 @@ spec:
           patchSetName: location-patch
         - type: PatchSet
           patchSetName: resource-group-name-patch
-        - type: PatchSet
-          patchSetName: metadata-patch
         - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
@@ -144,8 +133,6 @@ spec:
         - type: PatchSet
           patchSetName: resource-group-name-patch
         - type: PatchSet
-          patchSetName: metadata-patch
-        - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.annotations[crossplane.io/external-name]
@@ -175,8 +162,6 @@ spec:
         - type: PatchSet
           patchSetName: resource-group-name-patch
         - type: PatchSet
-          patchSetName: metadata-patch
-        - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.annotations[crossplane.io/external-name]
@@ -201,8 +186,6 @@ spec:
             networkSecurityGroupIdSelector:
               matchControllerRef: true
       patches:
-        - type: PatchSet
-          patchSetName: metadata-patch
     - name: vm-linux
       base:
         apiVersion: compute.azure.upbound.io/v1beta2
@@ -232,8 +215,6 @@ spec:
           patchSetName: location-patch
         - type: PatchSet
           patchSetName: resource-group-name-patch
-        - type: PatchSet
-          patchSetName: metadata-patch
         - type: PatchSet
           patchSetName: tags-patch
         - type: FromCompositeFieldPath
