@@ -55,6 +55,8 @@ spec:
         resourceGroupName:
           title: Azure Resource Group
           type: string
+          default: rg_powerappslogs_sdc_sandbox
+          description: Existing Azure resource group where VM resources will be deployed.
           pattern: '^[a-zA-Z0-9._()\\-]+$'
         costTag:
           title: COST Tag Value
