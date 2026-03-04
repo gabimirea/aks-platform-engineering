@@ -9,6 +9,9 @@ spec:
   compositeTypeRef:
     apiVersion: kubernetes.example.com/v1alpha1
     kind: XVMInstance
+  mode: Resources
+  publishConnectionDetailsWithStoreConfigRef:
+    name: default
   patchSets:
     - name: location-patch
       patches:
@@ -51,11 +54,17 @@ spec:
             - type: string
               string:
                 fmt: "%s-vnet"
+                type: Format
         - type: FromCompositeFieldPath
           fromFieldPath: spec.network.vnetAddressSpace
           toFieldPath: spec.forProvider.addressSpace
           policy:
             fromFieldPath: Optional
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
     - name: vm-subnet
       base:
         apiVersion: network.azure.upbound.io/v1beta2
@@ -77,11 +86,17 @@ spec:
             - type: string
               string:
                 fmt: "%s-subnet"
+                type: Format
         - type: FromCompositeFieldPath
           fromFieldPath: spec.network.subnetPrefix
           toFieldPath: spec.forProvider.addressPrefixes[0]
           policy:
             fromFieldPath: Optional
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
     - name: vm-public-ip
       base:
         apiVersion: network.azure.upbound.io/v1beta1
@@ -105,11 +120,17 @@ spec:
             - type: string
               string:
                 fmt: "%s-pip"
+                type: Format
         - type: FromCompositeFieldPath
           fromFieldPath: spec.network.publicIpAllocationMethod
           toFieldPath: spec.forProvider.allocationMethod
           policy:
             fromFieldPath: Optional
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
     - name: vm-security-group
       base:
         apiVersion: network.azure.upbound.io/v1beta1
@@ -141,6 +162,12 @@ spec:
             - type: string
               string:
                 fmt: "%s-nsg"
+                type: Format
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
     - name: vm-network-interface
       base:
         apiVersion: network.azure.upbound.io/v1beta1
@@ -170,11 +197,17 @@ spec:
             - type: string
               string:
                 fmt: "%s-nic"
+                type: Format
         - type: FromCompositeFieldPath
           fromFieldPath: spec.network.privateIpAddressAllocation
           toFieldPath: spec.forProvider.ipConfiguration[0].privateIpAddressAllocation
           policy:
             fromFieldPath: Optional
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
     - name: vm-nic-nsg-association
       base:
         apiVersion: network.azure.upbound.io/v1beta1
@@ -185,7 +218,11 @@ spec:
               matchControllerRef: true
             networkSecurityGroupIdSelector:
               matchControllerRef: true
-      patches:
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
     - name: vm-linux
       base:
         apiVersion: compute.azure.upbound.io/v1beta2
@@ -224,6 +261,7 @@ spec:
             - type: string
               string:
                 fmt: "%s-vm"
+                type: Format
         - type: FromCompositeFieldPath
           fromFieldPath: spec.adminUsername
           toFieldPath: spec.forProvider.adminUsername
@@ -266,3 +304,8 @@ spec:
           toFieldPath: spec.forProvider.osDisk.diskSizeGb
           policy:
             fromFieldPath: Optional
+      readinessChecks:
+        - type: MatchCondition
+          matchCondition:
+            type: Ready
+            status: "True"
