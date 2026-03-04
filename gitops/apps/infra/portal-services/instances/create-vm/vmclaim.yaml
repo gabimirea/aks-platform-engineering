@@ -8,9 +8,9 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   location: swedencentral
-  resourceGroupName: rg_powerappslogs_sdc_sandbox
+  resourceGroupName: rg-vm-sdc-001
   adminUsername: azureuser
-  sshPublicKey: Solna12345
+  sshPublicKey: Stockholm123
   vmSize: Standard_B2s
   image:
     publisher: Canonical
