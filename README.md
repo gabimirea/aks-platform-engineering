@@ -221,10 +221,11 @@ kubectl -n argocd get applications
 
 Backstage is managed from:
 - `gitops/bootstrap/control-plane/addons/backstage/app.yaml`
-
-If not already enabled by your current Argo sync selection, apply/update and sync:
+Set a GitHub PAT in your shell first, then create the secret:
 
 ```powershell
+$env:GITHUB_PAT = "<your-github-pat>"
+kubectl -n backstage create secret generic backstage-github --from-literal=token="$env:GITHUB_PAT"
 kubectl apply -f .\addons\backstage\app.yaml
 kubectl -n backstage get pods
 kubectl -n backstage get svc
@@ -287,5 +288,4 @@ kubectl -n backstage logs deploy/backstage --tail=100
 # 5) Demo GitOps path exists
 Get-ChildItem .\gitops\apps\infra\portal-services\instances
 ```
-
 
