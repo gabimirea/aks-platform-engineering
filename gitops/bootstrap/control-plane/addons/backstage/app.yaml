@@ -54,6 +54,7 @@ spec:
                 - host: github.com
                   token: ${GITHUB_TOKEN}
             auth:
+              environment: production
               providers:
                 github:
                   production:
