@@ -26,7 +26,7 @@ spec:
             pullPolicy: Always
           extraEnvVars:
             - name: APP_BASE_URL
-              value: http://backstage.local:7007
+              value: http://9.223.255.68:7007
             - name: NODE_OPTIONS
               value: --no-node-snapshot
             - name: GITHUB_TOKEN
