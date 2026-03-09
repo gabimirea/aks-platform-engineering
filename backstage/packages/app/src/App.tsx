@@ -60,17 +60,16 @@ const app = createApp({
   },
   components: {
     SignInPage: props => (
-      <SignInPage
-        {...props}
-        providers={[
-          'guest',
-          {
-            id: 'github-auth-provider',
-            title: 'GitHub',
-            message: 'Sign in using GitHub',
-            apiRef: githubAuthApiRef,
-          },
-        ]}
+        <SignInPage
+          {...props}
+          providers={[
+            {
+              id: 'github-auth-provider',
+              title: 'GitHub',
+              message: 'Sign in using GitHub',
+              apiRef: githubAuthApiRef,
+            },
+          ]}
       />
     ),
   },
