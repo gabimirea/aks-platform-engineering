@@ -85,6 +85,10 @@ spec:
                   rules:
                     - allow: [Template]
                 - type: url
+                  target: https://github.com/gabimirea/backstage-templates/blob/master/templates.yaml
+                  rules:
+                    - allow: [Location, Template, Component]
+                - type: url
                   target: https://github.com/gabimirea/aks-platform-engineering/blob/main/backstage/examples/org.yaml
                   rules:
                     - allow: [User, Group]
