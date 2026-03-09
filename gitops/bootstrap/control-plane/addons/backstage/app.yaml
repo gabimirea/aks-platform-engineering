@@ -68,6 +68,7 @@ spec:
             backend:
               baseUrl: ${APP_BASE_URL:-http://localhost:7007}
               csp:
+                connect-src: ["'self'", 'http:', 'https:']
                 upgrade-insecure-requests: false
               reading:
                 allow:
